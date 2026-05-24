@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — Critically Yours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0908;--bg2:#13110f;--bg3:#1c1916;--surface:#221f1b;--border:#2e2a25;--text:#f0ebe4;--text2:#9e9488;--text3:#5c564e;--accent:#c8a97e;--accent2:#8b5e3c;--gold:#d4a843;--gold2:#a07820;--red:#c0392b;--green:#27ae60;--shadow:rgba(0,0,0,0.6);--radius:12px;--radius2:20px;--font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="light"]{--bg:#f5f0e8;--bg2:#ede7d9;--bg3:#e4dccb;--surface:#ddd5c3;--border:#c8bfaf;--text:#1a1714;--text2:#5a5248;--text3:#9e9488;--accent:#8b5e3c;--accent2:#c8a97e;--gold:#a07820;--gold2:#d4a843;--shadow:rgba(0,0,0,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;display:flex;align-items:stretch;overflow:hidden}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:3px}
+.login-left{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px;position:relative;overflow:hidden}
+.login-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 30% 50%,rgba(200,169,126,0.07) 0%,transparent 70%);pointer-events:none}
+.login-bg-lines{position:absolute;inset:0;pointer-events:none;overflow:hidden;opacity:0.05}
+.login-right{width:460px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:40px}
+.brand-logo{width:48px;height:48px;object-fit:contain}
+.brand-text .title{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--accent);line-height:1}
+.brand-text .subtitle{font-size:0.75rem;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-top:3px}
+.login-tagline{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;line-height:1.05;letter-spacing:-0.02em;color:var(--text);margin-bottom:16px;max-width:480px}
+.login-tagline em{font-style:italic;color:var(--gold)}
+.login-desc{font-size:0.9rem;color:var(--text2);max-width:400px;line-height:1.7}
+.form-section{width:100%;max-width:360px}
+.form-title{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.form-sub{font-size:0.84rem;color:var(--text2);margin-bottom:32px;line-height:1.5}
+.google-btn{width:100%;padding:14px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;font-family:var(--font-body);font-size:0.9rem;font-weight:500;color:var(--text);transition:var(--transition);margin-bottom:20px}
+.google-btn:hover{border-color:var(--accent2);background:var(--surface);transform:translateY(-1px)}
+.google-btn svg{width:20px;height:20px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px;color:var(--text3);font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.info-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:24px}
+.info-box strong{color:var(--accent);font-weight:600}
+.info-box code{font-family:var(--font-mono);background:var(--surface);padding:2px 6px;border-radius:4px;font-size:0.78rem;color:var(--gold)}
+.error-msg{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);border-radius:var(--radius);padding:12px 16px;font-size:0.83rem;color:var(--red);margin-bottom:16px;display:none}
+.error-msg.show{display:block}
+.loading-spinner{display:none;text-align:center;padding:16px;color:var(--text2);font-size:0.85rem}
+.loading-spinner.show{display:block}
+.theme-toggle{position:fixed;top:20px;right:20px;width:36px;height:36px;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--transition);color:var(--text2);z-index:100}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text3);font-size:0.82rem;text-decoration:none;margin-bottom:32px;transition:color var(--transition)}
+.back-link:hover{color:var(--accent)}
+/* Role selection modal */
+.role-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.3s}
+.role-modal.open{opacity:1;pointer-events:all}
+.role-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:40px;width:100%;max-width:400px;text-align:center}
+.role-card h3{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.role-card p{font-size:0.85rem;color:var(--text2);margin-bottom:28px}
+.role-options{display:flex;flex-direction:column;gap:10px}
+.role-option{padding:14px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-family:var(--font-body);font-size:0.9rem;font-weight:500;color:var(--text);transition:var(--transition);text-align:left;display:flex;align-items:center;gap:12px}
+.role-option:hover{border-color:var(--gold);background:rgba(212,168,67,0.06)}
+.role-option-icon{width:36px;height:36px;background:rgba(212,168,67,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+@media(max-width:768px){.login-left{display:none}.login-right{width:100%;border-left:none;padding:40px 28px}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle">&#9790;</button>
+<div class="login-left">
+  <div class="login-bg"></div>
+  <div class="login-bg-lines">
+    <svg viewBox="0 0 800 600" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="200" r="150" fill="none" stroke="#d4a843" stroke-width="1"/>
+      <circle cx="600" cy="400" r="220" fill="none" stroke="#c8a97e" stroke-width="0.5"/>
+      <line x1="0" y1="300" x2="800" y2="100" stroke="#d4a843" stroke-width="0.8"/>
+      <line x1="100" y1="0" x2="400" y2="600" stroke="#c8a97e" stroke-width="0.5"/>
+    </svg>
+  </div>
+  <div class="brand">
+    <img src="cys_logo.png" alt="CYS" class="brand-logo" onerror="this.style.display='none'"/>
+    <div class="brand-text">
+      <div class="title">Critically Yours</div>
+      <div class="subtitle">DPS Megacity &bull; Humanities Fest</div>
+    </div>
+  </div>
+  <h1 class="login-tagline">Your ideas<br/><em>matter here.</em></h1>
+  <p class="login-desc">Sign in with your school Google account to access the fest portal, enroll in events, and track your journey through Critically Yours.</p>
+</div>
+
+<div class="login-right">
+  <div class="form-section">
+    <a href="index.html" class="back-link">&#8592; Back to Home</a>
+    <h2 class="form-title">Welcome</h2>
+    <p class="form-sub">Sign in to access the Critically Yours portal. Use your school Google account.</p>
+    
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="loading-spinner" id="loadingSpinner">&#9670; Signing you in...</div>
+
+    <button class="google-btn" id="googleBtn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="info-box">
+      <strong>School accounts only.</strong> You must use your DPS Megacity Google account.<br/>
+      
+    </div>
+
+    <div class="divider">OR</div>
+    <p style="font-size:0.83rem;color:var(--text3);text-align:center;line-height:1.6">Management, Event Heads, Core Team, Teacher-in-Charge, IT Team members — use the same Google login. Your role will be detected automatically.</p>
+  </div>
+</div>
+
+<!-- ROLE SELECTION MODAL -->
+<div class="role-modal" id="roleModal">
+  <div class="role-card">
+    <h3>Select Role</h3>
+    <p>Your account has multiple roles. Choose how you'd like to log in.</p>
+    <div class="role-options" id="roleOptions"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",
+  authDomain: "cys-dpsm.firebaseapp.com",
+  projectId: "cys-dpsm",
+  storageBucket: "cys-dpsm.firebasestorage.app",
+  messagingSenderId: "198853363575",
+  appId: "1:198853363575:web:365ff3bcb9b54b760b4372",
+  measurementId: "G-L17B5VLYHN"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ /*hd: 'dpsmegacity.in',*/ prompt: 'select_account' });
+
+// Theme
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('cys-theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cys-theme', next);
+  themeToggle.textContent = next === 'dark' ? '☀' : '☾';
+});
+
+const ALLOWED_DOMAIN = 'dpsmegacity.in';
+const ADMIN_EMAIL = 'aaravhfs@gmail.com';
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError() { document.getElementById('errorMsg').classList.remove('show'); }
+function showLoading() { document.getElementById('loadingSpinner').classList.add('show'); document.getElementById('googleBtn').disabled = true; }
+function hideLoading() { document.getElementById('loadingSpinner').classList.remove('show'); document.getElementById('googleBtn').disabled = false; }
+
+window.signInWithGoogle = async () => {
+  hideError();
+  showLoading();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const email = user.email || '';
+
+    // ALLOW admin email OR school domain
+    if (email !== ADMIN_EMAIL && !email.endsWith('@' + ALLOWED_DOMAIN)) {
+      await signOut(auth);
+      hideLoading();
+      showError(`Access denied. You must use your school account (@${ALLOWED_DOMAIN}) or the admin account.`);
+      return;
+    }
+
+    // Parse registration number from school email
+    let regNo = '';
+    if (email.endsWith('@' + ALLOWED_DOMAIN)) {
+      const localPart = email.split('@')[0];
+      const match = localPart.match(/\d+/);
+      regNo = match ? match[0] : '';
+    }
+
+    // Check if user document exists
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      // Check if this email is a preset management/staff account
+      const staffQ = query(collection(db,'staffAccounts'), where('email','==', email));
+      const staffSnap = await getDocs(staffQ);
+
+      if (email === ADMIN_EMAIL) {
+        // Admin/IT Team
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: email,
+          name: user.displayName || 'Aarav Sinha',
+          photoURL: user.photoURL || '',
+          roles: ['admin','it_team'],
+          activeRole: 'admin',
+          registrationNumber: regNo || 'ADMIN',
+          createdAt: serverTimestamp(),
+          isVerified: true
+        }, { merge: true });
+        localStorage.setItem('cys-role', 'admin');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      if (!staffSnap.empty) {
+        const staffData = staffSnap.docs[0].data();
+        const roles = staffData.roles || [staffData.role || 'participant'];
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: email,
+          name: user.displayName || '',
+          photoURL: user.photoURL || '',
+          roles: roles,
+          activeRole: roles[0],
+          staffDocId: staffSnap.docs[0].id,
+          registrationNumber: regNo,
+          createdAt: serverTimestamp(),
+          isVerified: true
+        }, { merge: true });
+        if (roles.length > 1) {
+          showRoleModal(roles, user.uid);
+          hideLoading();
+          return;
+        }
+        localStorage.setItem('cys-role', roles[0]);
+        redirectByRole(roles[0]);
+        return;
+      }
+
+      // New student — go to enrollment/profile setup
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: email,
+        name: user.displayName || '',
+        photoURL: user.photoURL || '',
+        roles: ['participant'],
+        activeRole: 'participant',
+        registrationNumber: regNo,
+        createdAt: serverTimestamp(),
+        isVerified: false
+      }, { merge: true });
+      window.location.href = 'profile-setup.html';
+      return;
+    }
+
+    // Existing user
+    const userData = userSnap.data();
+    const roles = userData.roles || ['participant'];
+
+    if (roles.length > 1) {
+      showRoleModal(roles, user.uid);
+      hideLoading();
+      return;
+    }
+
+    localStorage.setItem('cys-role', roles[0]);
+    redirectByRole(roles[0]);
+
+  } catch(err) {
+    hideLoading();
+    if (err.code === 'auth/popup-closed-by-user') return;
+    if (err.code === 'auth/popup-blocked') {
+      showError('Popup was blocked. Please allow popups for this site and try again.');
+      return;
+    }
+    showError('Sign-in failed: ' + (err.message || 'Unknown error'));
+    console.error(err);
+  }
+};
+
+function showRoleModal(roles, uid) {
+  const roleLabels = {
+    admin: { label: 'Administrator', icon: '&#9733;' },
+    it_team: { label: 'IT Team', icon: '&#9881;' },
+    core_team: { label: 'Core Team', icon: '&#9670;' },
+    teacher: { label: 'Teacher-in-Charge', icon: '&#9786;' },
+    event_head: { label: 'Event Head', icon: '&#9734;' },
+    media_team: { label: 'Media Team', icon: '&#9728;' },
+    participant: { label: 'Participant', icon: '&#9829;' }
+  };
+  const opts = document.getElementById('roleOptions');
+  opts.innerHTML = roles.map(r => {
+    const info = roleLabels[r] || { label: r, icon: '&#9670;' };
+    return `<button class="role-option" onclick="selectRole('${r}','${uid}')">
+      <span class="role-option-icon">${info.icon}</span>
+      <div><div style="font-weight:600">${info.label}</div></div>
+    </button>`;
+  }).join('');
+  document.getElementById('roleModal').classList.add('open');
+}
+
+window.selectRole = async (role, uid) => {
+  const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  await updateDoc(doc(db,'users',uid), { activeRole: role });
+  document.getElementById('roleModal').classList.remove('open');
+  localStorage.setItem('cys-role', role);
+  redirectByRole(role);
+};
+
+function redirectByRole(role) {
+  const map = {
+    admin: 'admin.html',
+    it_team: 'admin.html',
+    core_team: 'dashboard.html',
+    teacher: 'dashboard.html',
+    event_head: 'event-head.html',
+    media_team: 'dashboard.html',
+    participant: 'dashboard.html'
+  };
+  window.location.href = map[role] || 'dashboard.html';
+}
+
+// If already logged in, redirect
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const userRef = doc(db,'users',user.uid);
+    const snap = await getDoc(userRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.isVerified || data.roles?.includes('admin') || data.roles?.includes('it_team')) {
+        redirectByRole(data.activeRole || data.roles?.[0] || 'participant');
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

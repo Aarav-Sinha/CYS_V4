@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Complete Profile — Critically Yours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0908;--bg2:#13110f;--bg3:#1c1916;--surface:#221f1b;--border:#2e2a25;--text:#f0ebe4;--text2:#9e9488;--text3:#5c564e;--accent:#c8a97e;--accent2:#8b5e3c;--gold:#d4a843;--red:#c0392b;--green:#27ae60;--shadow:rgba(0,0,0,0.6);--radius:12px;--radius2:20px;--font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="light"]{--bg:#f5f0e8;--bg2:#ede7d9;--bg3:#e4dccb;--surface:#ddd5c3;--border:#c8bfaf;--text:#1a1714;--text2:#5a5248;--text3:#9e9488;--accent:#8b5e3c;--gold:#a07820;--shadow:rgba(0,0,0,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.setup-card{width:100%;max-width:560px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:48px}
+.setup-brand{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.setup-brand img{width:36px;height:36px;object-fit:contain}
+.setup-brand span{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--accent)}
+.setup-title{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.setup-sub{font-size:0.84rem;color:var(--text2);margin-bottom:32px;line-height:1.6}
+.profile-preview{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:28px}
+.profile-pic{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--surface);border:2px solid var(--border);flex-shrink:0}
+.profile-preview-info .name{font-weight:600;font-size:0.95rem;color:var(--text);margin-bottom:2px}
+.profile-preview-info .email{font-size:0.78rem;color:var(--text3);font-family:var(--font-mono)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.form-group.full{grid-column:1/-1}
+label{font-size:0.8rem;font-weight:500;color:var(--text2);letter-spacing:0.02em}
+.input-field{padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;transition:border-color var(--transition);width:100%}
+.input-field:focus{outline:none;border-color:var(--accent)}
+.input-field[readonly]{opacity:0.65;cursor:not-allowed}
+select.input-field{cursor:pointer}
+.input-field::placeholder{color:var(--text3)}
+.phone-row{display:flex;gap:10px;align-items:flex-start}
+.phone-row .form-group{flex:1}
+.same-check{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--text2);cursor:pointer;margin-bottom:16px}
+.same-check input[type=checkbox]{width:16px;height:16px;accent-color:var(--gold);cursor:pointer}
+.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--accent2));color:#fff;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:0.92rem;font-weight:600;cursor:pointer;transition:var(--transition);margin-top:8px;letter-spacing:0.03em}
+.btn-submit:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 8px 24px rgba(212,168,67,0.3)}
+.btn-submit:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.msg{padding:12px 16px;border-radius:var(--radius);font-size:0.83rem;margin-top:14px;display:none}
+.msg.error{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.3);color:var(--red)}
+.msg.success{background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:var(--green)}
+.msg.show{display:block}
+.theme-toggle{position:fixed;top:20px;right:20px;width:36px;height:36px;border:1px solid var(--border);background:var(--surface);border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:var(--transition);color:var(--text2);z-index:100}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.teacher-auto{font-size:0.78rem;color:var(--text3);margin-top:4px;font-style:italic}
+@media(max-width:480px){.setup-card{padding:32px 24px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle">&#9790;</button>
+
+<div class="setup-card">
+  <div class="setup-brand">
+    <img src="cys_logo.png" alt="CYS" onerror="this.style.display='none'"/>
+    <span>Critically Yours</span>
+  </div>
+  <h2 class="setup-title">Complete Your Profile</h2>
+  <p class="setup-sub">Your name, profile picture, and registration number have been captured from your school account. Please fill in the remaining details.</p>
+  
+  <div class="profile-preview" id="profilePreview">
+    <img class="profile-pic" id="previewPic" src="" alt="Profile"/>
+    <div class="profile-preview-info">
+      <div class="name" id="previewName">Loading...</div>
+      <div class="email" id="previewEmail"></div>
+    </div>
+  </div>
+
+  <form id="profileForm" onsubmit="return false">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Full Name (from school account)</label>
+        <input type="text" class="input-field" id="fieldName" readonly/>
+      </div>
+      <div class="form-group full">
+        <label>Registration Number (auto-detected)</label>
+        <input type="text" class="input-field" id="fieldRegNo" readonly/>
+      </div>
+      <div class="form-group">
+        <label>Class</label>
+        <select class="input-field" id="fieldClass" required onchange="loadSections()">
+          <option value="">Select Class</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Section</label>
+        <select class="input-field" id="fieldSection" required onchange="loadClassTeacher()">
+          <option value="">Select Section</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Class Teacher (auto-filled)</label>
+        <input type="text" class="input-field" id="fieldTeacher" readonly/>
+        <div class="teacher-auto" id="teacherAuto"></div>
+      </div>
+      <div class="form-group full">
+        <label>Calling Phone Number</label>
+        <input type="tel" class="input-field" id="fieldPhone" placeholder="Enter calling number" required/>
+      </div>
+      <div class="form-group full">
+        <label>WhatsApp Number</label>
+        <input type="tel" class="input-field" id="fieldWA" placeholder="Enter WhatsApp number" required/>
+        <label class="same-check" style="margin-top:8px"><input type="checkbox" id="sameAsCall" onchange="toggleSame()"/> Same as calling number</label>
+      </div>
+    </div>
+    <div class="msg error" id="errMsg"></div>
+    <div class="msg success" id="succMsg"></div>
+    <button class="btn-submit" id="submitBtn" onclick="saveProfile()">Save Profile &amp; Continue</button>
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, getDocs, query, orderBy, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",
+  authDomain: "cys-dpsm.firebaseapp.com",
+  projectId: "cys-dpsm",
+  storageBucket: "cys-dpsm.firebasestorage.app",
+  messagingSenderId: "198853363575",
+  appId: "1:198853363575:web:365ff3bcb9b54b760b4372",
+  measurementId: "G-L17B5VLYHN"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Theme
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('cys-theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cys-theme', next);
+  themeToggle.textContent = next === 'dark' ? '☀' : '☾';
+});
+
+let currentUser = null;
+let currentUserData = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  const uSnap = await getDoc(doc(db,'users',user.uid));
+  if (!uSnap.exists()) { window.location.href = 'login.html'; return; }
+  currentUserData = uSnap.data();
+  if (currentUserData.isVerified) { window.location.href = 'dashboard.html'; return; }
+  
+  document.getElementById('previewPic').src = user.photoURL || '';
+  document.getElementById('previewPic').onerror = function(){ this.style.background='var(--surface)';this.style.fontSize='24px'; };
+  document.getElementById('previewName').textContent = user.displayName || '';
+  document.getElementById('previewEmail').textContent = user.email || '';
+  document.getElementById('fieldName').value = user.displayName || '';
+  document.getElementById('fieldRegNo').value = currentUserData.registrationNumber || '';
+  
+  loadClasses();
+});
+
+async function loadClasses() {
+  try {
+    const snap = await getDocs(query(collection(db,'classes'), orderBy('order','asc')));
+    const select = document.getElementById('fieldClass');
+    snap.docs.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.data().name || d.id;
+      select.appendChild(opt);
+    });
+  } catch(e) { console.error(e); }
+}
+
+window.loadSections = async () => {
+  const classId = document.getElementById('fieldClass').value;
+  const sectionSel = document.getElementById('fieldSection');
+  sectionSel.innerHTML = '<option value="">Select Section</option>';
+  document.getElementById('fieldTeacher').value = '';
+  document.getElementById('teacherAuto').textContent = '';
+  if (!classId) return;
+  try {
+    const snap = await getDocs(query(collection(db,'classes',classId,'sections'), orderBy('order','asc')));
+    snap.docs.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.data().name || d.id;
+      sectionSel.appendChild(opt);
+    });
+  } catch(e) { console.error(e); }
+};
+
+window.loadClassTeacher = async () => {
+  const classId = document.getElementById('fieldClass').value;
+  const sectionId = document.getElementById('fieldSection').value;
+  if (!classId || !sectionId) return;
+  try {
+    const secDoc = await getDoc(doc(db,'classes',classId,'sections',sectionId));
+    if (secDoc.exists() && secDoc.data().classTeacher) {
+      document.getElementById('fieldTeacher').value = secDoc.data().classTeacher;
+      document.getElementById('teacherAuto').textContent = 'Auto-filled from school records';
+    } else {
+      document.getElementById('fieldTeacher').value = '';
+      document.getElementById('teacherAuto').textContent = 'Teacher not found in records — contact admin';
+    }
+  } catch(e) { console.error(e); }
+};
+
+window.toggleSame = () => {
+  const checked = document.getElementById('sameAsCall').checked;
+  const waField = document.getElementById('fieldWA');
+  if (checked) {
+    waField.value = document.getElementById('fieldPhone').value;
+    waField.readOnly = true;
+    waField.style.opacity = '0.65';
+    document.getElementById('fieldPhone').addEventListener('input', syncWA);
+  } else {
+    waField.readOnly = false;
+    waField.style.opacity = '1';
+    document.getElementById('fieldPhone').removeEventListener('input', syncWA);
+  }
+};
+function syncWA(e) {
+  if (document.getElementById('sameAsCall').checked) document.getElementById('fieldWA').value = e.target.value;
+}
+
+window.saveProfile = async () => {
+  const errEl = document.getElementById('errMsg');
+  const succEl = document.getElementById('succMsg');
+  errEl.classList.remove('show'); succEl.classList.remove('show');
+
+  const cls = document.getElementById('fieldClass').value;
+  const sec = document.getElementById('fieldSection').value;
+  const phone = document.getElementById('fieldPhone').value.trim();
+  const wa = document.getElementById('fieldWA').value.trim();
+  const teacher = document.getElementById('fieldTeacher').value.trim();
+
+  if (!cls) { errEl.textContent = 'Please select your class.'; errEl.classList.add('show'); return; }
+  if (!sec) { errEl.textContent = 'Please select your section.'; errEl.classList.add('show'); return; }
+  if (!phone) { errEl.textContent = 'Please enter your calling phone number.'; errEl.classList.add('show'); return; }
+  if (!wa) { errEl.textContent = 'Please enter your WhatsApp number.'; errEl.classList.add('show'); return; }
+  if (!/^[6-9]\d{9}$/.test(phone.replace(/\s/g,''))) { errEl.textContent = 'Please enter a valid 10-digit Indian phone number.'; errEl.classList.add('show'); return; }
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Saving...';
+
+  try {
+    // Get class and section names for display
+    const classDoc = await getDoc(doc(db,'classes',cls));
+    const sectionDoc = await getDoc(doc(db,'classes',cls,'sections',sec));
+    const className = classDoc.exists() ? classDoc.data().name : cls;
+    const sectionName = sectionDoc.exists() ? sectionDoc.data().name : sec;
+
+    await updateDoc(doc(db,'users',currentUser.uid), {
+      classId: cls,
+      className: className,
+      sectionId: sec,
+      sectionName: sectionName,
+      classTeacher: teacher,
+      phoneCall: phone,
+      phoneWA: wa,
+      isVerified: true,
+      updatedAt: serverTimestamp()
+    });
+    succEl.textContent = 'Profile saved! Redirecting to your dashboard...';
+    succEl.classList.add('show');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
+  } catch(e) {
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Save Profile & Continue';
+    errEl.textContent = 'Failed to save profile: ' + e.message;
+    errEl.classList.add('show');
+  }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — Critically Yours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0908;--bg2:#13110f;--bg3:#1c1916;--surface:#221f1b;--border:#2e2a25;--text:#f0ebe4;--text2:#9e9488;--text3:#5c564e;--accent:#c8a97e;--accent2:#8b5e3c;--gold:#d4a843;--red:#c0392b;--green:#27ae60;--blue:#2980b9;--shadow:rgba(0,0,0,0.6);--radius:12px;--radius2:20px;--sidebar:260px;--font-display:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="light"]{--bg:#f5f0e8;--bg2:#ede7d9;--bg3:#e4dccb;--surface:#ddd5c3;--border:#c8bfaf;--text:#1a1714;--text2:#5a5248;--text3:#9e9488;--accent:#8b5e3c;--gold:#a07820;--shadow:rgba(0,0,0,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);display:flex;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:3px}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:200;transition:transform var(--transition)}
+.sidebar-header{padding:24px 20px 16px;border-bottom:1px solid var(--border)}
+.sidebar-brand{display:flex;align-items:center;gap:10px}
+.sidebar-brand img{width:36px;height:36px;object-fit:contain}
+.sidebar-brand-text .title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--accent);line-height:1}
+.sidebar-brand-text .subtitle{font-size:0.68rem;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-top:2px}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:var(--surface);flex-shrink:0}
+.sidebar-user-info .name{font-size:0.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.sidebar-user-info .role{font-size:0.68rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gold);margin-top:1px}
+.sidebar-nav{padding:12px 12px;flex:1}
+.nav-section-label{font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);padding:6px 8px 4px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:0.87rem;font-weight:500;color:var(--text2);transition:var(--transition);text-decoration:none;margin-bottom:2px}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(212,168,67,0.1);color:var(--gold);border:1px solid rgba(212,168,67,0.15)}
+.nav-item-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--bg3);flex-shrink:0}
+.nav-item.active .nav-item-icon{background:rgba(212,168,67,0.12)}
+.sidebar-bottom{padding:16px 12px;border-top:1px solid var(--border)}
+
+/* MAIN */
+.main{flex:1;margin-left:var(--sidebar);display:flex;flex-direction:column;min-height:100vh}
+.topbar{padding:16px 28px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{padding:8px 14px;border:1px solid var(--border);background:var(--surface);border-radius:8px;color:var(--text2);font-size:0.8rem;font-weight:500;cursor:pointer;transition:var(--transition);font-family:var(--font-body);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.theme-toggle{width:34px;height:34px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);transition:var(--transition)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.content{padding:28px;flex:1}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+.stat-val{font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:4px}
+.stat-label{font-size:0.78rem;font-weight:500;color:var(--text2);letter-spacing:0.04em;text-transform:uppercase}
+.stat-card-sub{font-size:0.72rem;color:var(--text3);margin-top:4px}
+
+/* STATUS BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.badge-pending{background:rgba(212,168,67,0.1);color:var(--gold);border:1px solid rgba(212,168,67,0.2)}
+.badge-selected{background:rgba(39,174,96,0.1);color:var(--green);border:1px solid rgba(39,174,96,0.2)}
+.badge-rejected{background:rgba(192,57,43,0.1);color:var(--red);border:1px solid rgba(192,57,43,0.2)}
+.badge-waitlisted{background:rgba(41,128,185,0.1);color:var(--blue);border:1px solid rgba(41,128,185,0.2)}
+
+/* TABLE */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.table-title{font-weight:600;font-size:0.9rem;color:var(--text)}
+.search-input{padding:8px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:0.83rem;width:200px;transition:border-color var(--transition)}
+.search-input:focus{outline:none;border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+table{width:100%;border-collapse:collapse}
+th{font-size:0.72rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);padding:11px 16px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg3)}
+td{padding:12px 16px;font-size:0.85rem;color:var(--text2);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(200,169,126,0.03)}
+.participant-name{color:var(--text);font-weight:500}
+.action-btn{padding:5px 12px;border-radius:7px;font-size:0.73rem;font-weight:600;cursor:pointer;border:1px solid;transition:var(--transition);font-family:var(--font-body)}
+.action-btn.select{border-color:rgba(39,174,96,0.3);background:rgba(39,174,96,0.08);color:var(--green)}
+.action-btn.select:hover{background:rgba(39,174,96,0.15)}
+.action-btn.reject{border-color:rgba(192,57,43,0.3);background:rgba(192,57,43,0.08);color:var(--red)}
+.action-btn.reject:hover{background:rgba(192,57,43,0.15)}
+.action-btn.waitlist{border-color:rgba(41,128,185,0.3);background:rgba(41,128,185,0.08);color:var(--blue)}
+
+/* ANNOUNCE FORM */
+.announce-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.announce-form textarea{width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;resize:vertical;min-height:80px;transition:border-color var(--transition)}
+.announce-form textarea:focus{outline:none;border-color:var(--accent)}
+.target-checkboxes{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.target-check{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text2);cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 12px;transition:var(--transition)}
+.target-check:hover{border-color:var(--accent2)}
+.target-check input{accent-color:var(--gold)}
+.btn-post{padding:10px 22px;background:linear-gradient(135deg,var(--gold),var(--accent2));color:#fff;border:none;border-radius:9px;font-family:var(--font-body);font-size:0.85rem;font-weight:600;cursor:pointer;transition:var(--transition)}
+.btn-post:hover{opacity:0.88;transform:translateY(-1px)}
+
+/* MESSAGES / CHAT */
+.chat-layout{display:grid;grid-template-columns:280px 1fr;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:70vh}
+.chat-list{border-right:1px solid var(--border);overflow-y:auto}
+.chat-list-header{padding:14px 16px;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+.chat-list-item{padding:12px 16px;cursor:pointer;transition:background var(--transition);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-list-item:hover{background:var(--bg3)}
+.chat-list-item.active{background:rgba(212,168,67,0.06);border-right:2px solid var(--gold)}
+.chat-list-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--accent)}
+.chat-list-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.chat-list-name{font-size:0.85rem;font-weight:600;color:var(--text)}
+.chat-list-preview{font-size:0.75rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.chat-unread{background:var(--gold);color:#fff;border-radius:100px;font-size:0.68rem;font-weight:700;padding:2px 7px;margin-left:auto}
+.chat-main{display:flex;flex-direction:column}
+.chat-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.chat-header-name{font-weight:600;font-size:0.92rem}
+.chat-header-sub{font-size:0.74rem;color:var(--text3)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.chat-msg{max-width:70%;padding:10px 14px;border-radius:16px;font-size:0.87rem;line-height:1.5;position:relative}
+.chat-msg.out{background:rgba(212,168,67,0.12);border:1px solid rgba(212,168,67,0.2);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-msg.in{background:var(--bg3);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg-sender{font-size:0.72rem;font-weight:600;color:var(--gold);margin-bottom:3px}
+.chat-msg-role{font-size:0.65rem;color:var(--text3)}
+.chat-msg-time{font-size:0.65rem;color:var(--text3);text-align:right;margin-top:4px}
+.chat-msg-status{font-size:0.65rem;color:var(--text3)}
+.chat-input-area{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.chat-input{flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-body);font-size:0.88rem;transition:border-color var(--transition)}
+.chat-input:focus{outline:none;border-color:var(--accent)}
+.chat-input::placeholder{color:var(--text3)}
+.send-btn{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--accent2));border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;transition:var(--transition)}
+.send-btn:hover{opacity:0.88;transform:scale(1.05)}
+.no-chat{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--text3)}
+.no-chat-icon{font-size:2.5rem}
+/* Ticket list */
+.ticket-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;transition:var(--transition)}
+.ticket-item:hover{border-color:var(--accent2)}
+.ticket-title{font-weight:600;color:var(--text);margin-bottom:4px;font-size:0.9rem}
+.ticket-meta{font-size:0.78rem;color:var(--text3);margin-bottom:8px}
+.ticket-desc{font-size:0.84rem;color:var(--text2)}
+/* Stars */
+.stars{display:flex;gap:3px;cursor:pointer}
+.star{font-size:1rem;color:var(--text3);transition:color var(--transition)}
+.star.filled{color:var(--gold)}
+/* Rejection msg */
+.rejection-banner{background:rgba(192,57,43,0.1);border:1px solid rgba(192,57,43,0.25);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;font-size:0.87rem;color:var(--text2);line-height:1.6}
+.rejection-banner strong{color:var(--red)}
+/* Notes */
+.notes-input{width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:0.83rem;resize:none}
+.notes-input:focus{outline:none;border-color:var(--accent)}
+/* mobile */
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.chat-layout{grid-template-columns:1fr}.chat-list{display:none}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <img src="cys_logo.png" alt="CYS" onerror="this.style.display='none'"/>
+      <div class="sidebar-brand-text">
+        <div class="title">Critically Yours</div>
+        <div class="subtitle">Portal</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-user">
+    <img class="sidebar-avatar" id="sidebarAvatar" src="" alt=""/>
+    <div class="sidebar-user-info">
+      <div class="name" id="sidebarName">Loading...</div>
+      <div class="role" id="sidebarRole">—</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav"></nav>
+  <div class="sidebar-bottom">
+    <a href="index.html" class="nav-item">
+      <span class="nav-item-icon">&#8962;</span>Home
+    </a>
+    <div class="nav-item" id="logoutBtn">
+      <span class="nav-item-icon">&#8594;</span>Sign Out
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="topbar-btn" onclick="toggleSidebar()" id="menuBtn" style="display:none">&#9776;</button>
+      <span class="topbar-title" id="topbarTitle">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle">&#9790;</button>
+      <a href="ticket.html" class="topbar-btn" id="myIdBtn" style="display:none">&#9642; My ID Card</a>
+    </div>
+  </div>
+  <div class="content" id="mainContent">
+    <div style="text-align:center;padding:80px;color:var(--text2)">Loading dashboard...</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, getDocs, addDoc, updateDoc, query, where, orderBy, onSnapshot, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",
+  authDomain: "cys-dpsm.firebaseapp.com",
+  projectId: "cys-dpsm",
+  storageBucket: "cys-dpsm.firebasestorage.app",
+  messagingSenderId: "198853363575",
+  appId: "1:198853363575:web:365ff3bcb9b54b760b4372",
+  measurementId: "G-L17B5VLYHN"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Theme
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('cys-theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
+themeToggle.addEventListener('click', () => {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('cys-theme', t);
+  themeToggle.textContent = t === 'dark' ? '☀' : '☾';
+});
+
+let currentUser = null, currentUserData = null;
+const ROLE_LABELS = { admin:'Administrator', it_team:'IT Team', core_team:'Core Team', teacher:'Teacher-in-Charge', event_head:'Event Head', media_team:'Media Team', participant:'Participant' };
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  currentUser = user;
+  const uSnap = await getDoc(doc(db,'users',user.uid));
+  if (!uSnap.exists()) { window.location.href = 'login.html'; return; }
+  currentUserData = uSnap.data();
+  if (!currentUserData.isVerified) { window.location.href = 'profile-setup.html'; return; }
+  
+  setupSidebar();
+  renderDashboard();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  localStorage.removeItem('cys-role');
+  window.location.href = 'index.html';
+});
+
+window.toggleSidebar = () => {
+  document.getElementById('sidebar').classList.toggle('open');
+};
+
+function setupSidebar() {
+  const ud = currentUserData;
+  document.getElementById('sidebarAvatar').src = ud.photoURL || '';
+  document.getElementById('sidebarName').textContent = ud.name || '';
+  const role = ud.activeRole || ud.roles?.[0] || 'participant';
+  document.getElementById('sidebarRole').textContent = ROLE_LABELS[role] || role;
+  
+  const navItems = getNavItems(role);
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = navItems.map(item => {
+    if (item.divider) return `<div class="nav-section-label">${item.label}</div>`;
+    return `<a class="nav-item" data-panel="${item.panel}" onclick="switchPanel('${item.panel}')">
+      <span class="nav-item-icon">${item.icon}</span>${item.label}
+    </a>`;
+  }).join('');
+
+  if (['participant','event_head','media_team'].includes(role)) {
+    document.getElementById('myIdBtn').style.display = 'inline-flex';
+  }
+}
+
+function getNavItems(role) {
+  const base = [
+    { panel:'home', icon:'&#9670;', label:'Overview' },
+    { panel:'messages', icon:'&#9993;', label:'Messages' },
+    { panel:'announcements', icon:'&#128227;', label:'Announcements' },
+    { panel:'tickets', icon:'&#9888;', label:'Tickets' },
+  ];
+  if (role === 'participant') return [...base];
+  if (role === 'event_head') return [
+    ...base,
+    { divider: true, label: 'Event Management' },
+    { panel:'participants', icon:'&#128100;', label:'Participants' },
+    { panel:'post-announce', icon:'&#128228;', label:'Post Announcement' },
+    { panel:'blast', icon:'&#128226;', label:'Send Blast' },
+  ];
+  if (['admin','it_team','core_team','teacher'].includes(role)) return [
+    ...base,
+    { divider: true, label: 'Management' },
+    { panel:'participants', icon:'&#128100;', label:'All Participants' },
+    { panel:'post-announce', icon:'&#128228;', label:'Post Announcement' },
+    { panel:'blast', icon:'&#128226;', label:'Send Blast' },
+    { panel:'analytics', icon:'&#128202;', label:'Analytics' },
+    { divider: true, label: 'Admin' },
+    { panel:'admin-link', icon:'&#9881;', label:'Admin Panel' },
+  ];
+  return base;
+}
+
+function switchPanel(panel) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll(`[data-panel="${panel}"]`).forEach(el => el.classList.add('active'));
+  if (panel === 'admin-link') { window.location.href = 'admin.html'; return; }
+  renderPanel(panel);
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderDashboard() { switchPanel('home'); }
+
+async function renderPanel(panel) {
+  const content = document.getElementById('mainContent');
+  const titles = { home:'Overview', messages:'Messages', announcements:'Announcements', tickets:'Tickets', participants:'Participants', 'post-announce':'Post Announcement', blast:'Send Blast', analytics:'Analytics' };
+  document.getElementById('topbarTitle').textContent = titles[panel] || 'Dashboard';
+  
+  if (panel === 'home') await renderHome(content);
+  else if (panel === 'messages') await renderMessages(content);
+  else if (panel === 'announcements') await renderAnnouncements(content);
+  else if (panel === 'tickets') await renderTickets(content);
+  else if (panel === 'participants') await renderParticipants(content);
+  else if (panel === 'post-announce') renderPostAnnounce(content);
+  else if (panel === 'blast') renderBlast(content);
+  else if (panel === 'analytics') await renderAnalytics(content);
+}
+
+// HOME
+async function renderHome(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  let html = '';
+  
+  // Participant view
+  if (role === 'participant') {
+    const regQ = query(collection(db,'registrations'), where('userId','==',currentUser.uid));
+    const regSnap = await getDocs(regQ);
+    const rejected = regSnap.docs.find(d => d.data().status === 'rejected');
+    
+    if (rejected) {
+      const rejMsg = await getDoc(doc(db,'settings','global'));
+      const preset = rejMsg.exists() ? (rejMsg.data().rejectionMessage || 'Unfortunately, you have not been selected for this event. Thank you for participating in the auditions.') : 'Unfortunately, you have not been selected.';
+      html += `<div class="rejection-banner"><strong>&#9888; Audition Result:</strong> ${esc(preset)}</div>`;
+    }
+    
+    if (regSnap.empty) {
+      html += `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;text-align:center">
+        <div style="font-size:2rem;margin-bottom:12px">&#9828;</div>
+        <p style="color:var(--text2);margin-bottom:16px">You have not enrolled in any event yet.</p>
+        <a href="index.html#events" style="display:inline-block;padding:10px 24px;background:linear-gradient(135deg,var(--gold),var(--accent2));color:#fff;border-radius:9px;text-decoration:none;font-weight:600;font-size:0.87rem">Browse Events</a>
+      </div>`;
+    } else {
+      const reg = regSnap.docs[0].data();
+      const statusMap = { audition_pending:'Audition Pending', selected:'Selected', rejected:'Not Selected', waitlisted:'Waitlisted' };
+      const badgeMap = { audition_pending:'badge-pending', selected:'badge-selected', rejected:'badge-rejected', waitlisted:'badge-waitlisted' };
+      html += `<div class="stats-grid">
+        <div class="stat-card"><div class="stat-val">${esc(reg.eventName||'')}</div><div class="stat-label">Enrolled Event</div></div>
+        <div class="stat-card"><div style="margin-bottom:6px"><span class="badge ${badgeMap[reg.status]||'badge-pending'}">${statusMap[reg.status]||reg.status}</span></div><div class="stat-label">Audition Status</div></div>
+      </div>`;
+      
+      if (reg.status === 'selected') {
+        html += `<div style="background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.2);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;font-size:0.87rem;color:var(--text2)">
+          <strong style="color:var(--green)">&#10003; Congratulations!</strong> You have been selected for <strong style="color:var(--text)">${esc(reg.eventName)}</strong>. Check announcements for further details.
+        </div>`;
+      }
+    }
+  }
+
+  // Management welcome
+  if (['admin','it_team','core_team','teacher'].includes(role)) {
+    const regSnap = await getDocs(collection(db,'registrations'));
+    const evSnap = await getDocs(collection(db,'events'));
+    const selected = regSnap.docs.filter(d => d.data().status === 'selected').length;
+    const pending = regSnap.docs.filter(d => d.data().status === 'audition_pending').length;
+    html += `<div class="stats-grid">
+      <div class="stat-card"><div class="stat-val">${regSnap.size}</div><div class="stat-label">Total Registrations</div></div>
+      <div class="stat-card"><div class="stat-val">${selected}</div><div class="stat-label">Selected</div></div>
+      <div class="stat-card"><div class="stat-val">${pending}</div><div class="stat-label">Pending Audition</div></div>
+      <div class="stat-card"><div class="stat-val">${evSnap.size}</div><div class="stat-label">Total Events</div></div>
+    </div>`;
+  }
+
+  // Recent announcements
+  html += `<div style="margin-top:8px">`;
+  html += `<div style="font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Recent Announcements</div>`;
+  html += `<div id="homeAnnounces">Loading...</div></div>`;
+  
+  c.innerHTML = html;
+  
+  // Load recent announcements
+  const role2 = currentUserData.activeRole || currentUserData.roles?.[0];
+  const q = query(collection(db,'announcements'), where('targetRoles','array-contains', role2), orderBy('createdAt','desc'), limit(5));
+  onSnapshot(q, (snap) => {
+    const el = document.getElementById('homeAnnounces');
+    if (!el) return;
+    if (snap.empty) { el.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;padding:16px 0">No announcements yet.</div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const a = d.data();
+      const date = a.createdAt ? new Date(a.createdAt.toDate()).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+      return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:10px;font-size:0.86rem;color:var(--text2);line-height:1.6">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:0.75rem;color:var(--text3)">${esc(a.postedBy||'Management')}</span><span style="font-size:0.72rem;color:var(--text3);font-family:var(--font-mono)">${date}</span></div>
+        ${esc(a.message||'')}
+      </div>`;
+    }).join('');
+  });
+}
+
+// MESSAGES
+async function renderMessages(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  // Build conversation list based on role permissions
+  let convItems = [];
+  
+  // Add broadcast channels
+  const channelDefs = {
+    participant: [{ id:'evt-head-broadcast', name:'Event Head', icon:'&#9734;', type:'channel' }],
+    event_head: [{ id:'management-broadcast', name:'Management', icon:'&#9670;', type:'channel' }, { id:'participants-broadcast', name:'All Participants', icon:'&#128100;', type:'channel' }],
+    core_team: [{ id:'all-broadcast', name:'All Fest Members', icon:'&#127775;', type:'channel' }, { id:'event-head-broadcast', name:'Event Heads', icon:'&#9734;', type:'channel' }],
+    teacher: [{ id:'all-broadcast', name:'All Fest Members', icon:'&#127775;', type:'channel' }, { id:'event-head-broadcast', name:'Event Heads', icon:'&#9734;', type:'channel' }],
+    admin: [{ id:'all-broadcast', name:'All Members', icon:'&#127775;', type:'channel' }],
+    it_team: [{ id:'all-broadcast', name:'All Members', icon:'&#127775;', type:'channel' }],
+    media_team: []
+  };
+  
+  convItems = channelDefs[role] || [];
+
+  // Load DM conversations
+  const dmQ = query(collection(db,'conversations'), where('participants','array-contains',currentUser.uid), orderBy('lastMessageAt','desc'));
+  const dmSnap = await getDocs(dmQ);
+  
+  c.innerHTML = `<div class="chat-layout">
+    <div class="chat-list">
+      <div class="chat-list-header">Conversations</div>
+      ${convItems.map(item => `<div class="chat-list-item" onclick="openChannel('${esc(item.id)}','${esc(item.name)}')">
+        <div class="chat-list-avatar">${item.icon}</div>
+        <div style="flex:1;min-width:0"><div class="chat-list-name">${esc(item.name)}</div><div class="chat-list-preview">Broadcast channel</div></div>
+      </div>`).join('')}
+      ${dmSnap.docs.map(d => {
+        const conv = d.data();
+        const otherUid = conv.participants?.find(p => p !== currentUser.uid);
+        const otherName = conv.participantNames?.[otherUid] || 'User';
+        const initial = otherName[0]?.toUpperCase() || '?';
+        return `<div class="chat-list-item" onclick="openDM('${d.id}','${esc(otherName)}','${otherUid||''}')">
+          <div class="chat-list-avatar">${initial}</div>
+          <div style="flex:1;min-width:0"><div class="chat-list-name">${esc(otherName)}</div><div class="chat-list-preview">${esc(conv.lastMessage||'')}</div></div>
+          ${conv.unread?.[currentUser.uid] ? `<span class="chat-unread">${conv.unread[currentUser.uid]}</span>` : ''}
+        </div>`;
+      }).join('')}
+      ${convItems.length === 0 && dmSnap.empty ? '<div style="padding:24px 16px;text-align:center;color:var(--text3);font-size:0.83rem">No conversations yet.</div>' : ''}
+    </div>
+    <div class="chat-main" id="chatMain">
+      <div class="no-chat"><div class="no-chat-icon">&#9993;</div><span>Select a conversation</span></div>
+    </div>
+  </div>`;
+}
+
+window.openChannel = async (channelId, channelName) => {
+  const main = document.getElementById('chatMain');
+  if (!main) return;
+  main.innerHTML = `<div class="chat-header">
+    <div>
+      <div class="chat-header-name">${esc(channelName)}</div>
+      <div class="chat-header-sub">Broadcast Channel</div>
+    </div>
+  </div>
+  <div class="chat-messages" id="chatMsgs"></div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInputField" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChannelMsg('${channelId}')"/>
+    <button class="send-btn" onclick="sendChannelMsg('${channelId}')">&#10148;</button>
+  </div>`;
+  
+  const q = query(collection(db,'channelMessages',channelId,'messages'), orderBy('createdAt','asc'), limit(100));
+  onSnapshot(q, (snap) => {
+    const msgsEl = document.getElementById('chatMsgs');
+    if (!msgsEl) return;
+    msgsEl.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      const isOut = m.senderId === currentUser.uid;
+      const time = m.createdAt ? new Date(m.createdAt.toDate()).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="chat-msg ${isOut?'out':'in'}">
+        ${!isOut ? `<div class="chat-msg-sender">${esc(m.senderName||'')}<span class="chat-msg-role"> &bull; ${esc(ROLE_LABELS[m.senderRole]||m.senderRole||'')}</span></div>` : ''}
+        ${esc(m.text||'')}
+        <div class="chat-msg-time">${time}${isOut?' &#10003;&#10003;':''}</div>
+      </div>`;
+    }).join('');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  });
+};
+
+window.sendChannelMsg = async (channelId) => {
+  const input = document.getElementById('chatInputField');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  try {
+    await addDoc(collection(db,'channelMessages',channelId,'messages'), {
+      text, senderId: currentUser.uid, senderName: currentUserData.name || '', senderRole: role, createdAt: serverTimestamp(), read: false
+    });
+  } catch(e) { console.error(e); }
+};
+
+window.openDM = async (convId, otherName, otherUid) => {
+  const main = document.getElementById('chatMain');
+  if (!main) return;
+  main.innerHTML = `<div class="chat-header">
+    <div><div class="chat-header-name">${esc(otherName)}</div><div class="chat-header-sub">Direct Message</div></div>
+  </div>
+  <div class="chat-messages" id="chatMsgs"></div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInputField" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendDM('${convId}')"/>
+    <button class="send-btn" onclick="sendDM('${convId}')">&#10148;</button>
+  </div>`;
+  
+  const q = query(collection(db,'conversations',convId,'messages'), orderBy('createdAt','asc'), limit(200));
+  onSnapshot(q, (snap) => {
+    const msgsEl = document.getElementById('chatMsgs');
+    if (!msgsEl) return;
+    msgsEl.innerHTML = snap.docs.map(d => {
+      const m = d.data();
+      const isOut = m.senderId === currentUser.uid;
+      const time = m.createdAt ? new Date(m.createdAt.toDate()).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="chat-msg ${isOut?'out':'in'}">
+        ${!isOut ? `<div class="chat-msg-sender">${esc(m.senderName||'')}</div>` : ''}
+        ${esc(m.text||'')}
+        <div class="chat-msg-time">${time}${isOut ? (m.seen ? ' &#10003;&#10003;' : m.delivered ? ' &#10003;&#10003;' : ' &#10003;') : ''}</div>
+      </div>`;
+    }).join('');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    // Mark as read
+    if (convId) updateDoc(doc(db,'conversations',convId), { [`unread.${currentUser.uid}`]: 0 }).catch(()=>{});
+  });
+};
+
+window.sendDM = async (convId) => {
+  const input = document.getElementById('chatInputField');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  try {
+    await addDoc(collection(db,'conversations',convId,'messages'), {
+      text, senderId: currentUser.uid, senderName: currentUserData.name || '', createdAt: serverTimestamp(), delivered: true, seen: false
+    });
+    await updateDoc(doc(db,'conversations',convId), { lastMessage: text, lastMessageAt: serverTimestamp() });
+  } catch(e) { console.error(e); }
+};
+
+// ANNOUNCEMENTS
+async function renderAnnouncements(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  const q = query(collection(db,'announcements'), where('targetRoles','array-contains',role), orderBy('createdAt','desc'));
+  c.innerHTML = `<div id="announceContainer">Loading...</div>`;
+  onSnapshot(q, (snap) => {
+    const el = document.getElementById('announceContainer');
+    if (!el) return;
+    if (snap.empty) { el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:40px">No announcements for you yet.</div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const a = d.data();
+      const date = a.createdAt ? new Date(a.createdAt.toDate()).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '';
+      const targets = (a.targetRoles||[]).join(', ');
+      return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+          <div>
+            <span style="font-weight:600;font-size:0.88rem;color:var(--text)">${esc(a.postedBy||'Management')}</span>
+            <span style="font-size:0.72rem;color:var(--text3);margin-left:8px">${esc(a.postedByRole ? '· '+ROLE_LABELS[a.postedByRole] : '')}</span>
+          </div>
+          <span style="font-size:0.72rem;color:var(--text3);font-family:var(--font-mono)">${date}</span>
+        </div>
+        <p style="font-size:0.88rem;color:var(--text2);line-height:1.7">${esc(a.message||'')}</p>
+        <div style="margin-top:8px;font-size:0.72rem;color:var(--text3)">Targeted to: ${esc(targets)}</div>
+      </div>`;
+    }).join('');
+  });
+}
+
+// TICKETS
+async function renderTickets(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  const isManagement = ['admin','it_team','core_team','teacher'].includes(role);
+  
+  let q;
+  if (isManagement) {
+    q = query(collection(db,'tickets'), orderBy('createdAt','desc'));
+  } else {
+    q = query(collection(db,'tickets'), where('userId','==',currentUser.uid), orderBy('createdAt','desc'));
+  }
+  
+  c.innerHTML = `
+    ${!isManagement ? `<div style="margin-bottom:20px">
+      <button class="btn-post" onclick="showNewTicketForm()">&#43; Raise New Ticket</button>
+    </div>
+    <div id="newTicketForm" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:16px">New Ticket</div>
+      <select id="tCat" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;margin-bottom:12px">
+        <option>Technical Issue</option><option>Website Bug</option><option>Registration Problem</option><option>Login Issue</option><option>Other</option>
+      </select>
+      <textarea id="tDesc" rows="3" placeholder="Describe the issue..." style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;resize:vertical;margin-bottom:12px"></textarea>
+      <button class="btn-post" onclick="submitNewTicket()">Submit Ticket</button>
+      <div id="tMsg" style="font-size:0.82rem;margin-top:8px;color:var(--green)"></div>
+    </div>` : ''}
+    <div id="ticketList">Loading...</div>`;
+  
+  onSnapshot(q, (snap) => {
+    const el = document.getElementById('ticketList');
+    if (!el) return;
+    if (snap.empty) { el.innerHTML = '<div style="color:var(--text3);text-align:center;padding:40px">No tickets found.</div>'; return; }
+    const statusColors = { open:'var(--gold)', in_progress:'var(--blue)', resolved:'var(--green)', closed:'var(--text3)' };
+    el.innerHTML = snap.docs.map(d => {
+      const t = d.data();
+      const date = t.createdAt ? new Date(t.createdAt.toDate()).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : '';
+      const color = statusColors[t.status] || 'var(--text3)';
+      return `<div class="ticket-item">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div class="ticket-title">${esc(t.category||'Issue')}</div>
+          <span style="font-size:0.72rem;font-weight:600;color:${color};text-transform:uppercase;letter-spacing:0.05em">${esc(t.status||'open')}</span>
+        </div>
+        <div class="ticket-meta">${isManagement ? `By: ${esc(t.userName||t.userEmail||'Unknown')} &bull; ` : ''}${date}</div>
+        <div class="ticket-desc">${esc(t.description||'')}</div>
+        ${isManagement ? `<div style="margin-top:12px;display:flex;gap:8px">
+          <button class="action-btn select" onclick="updateTicketStatus('${d.id}','in_progress')">In Progress</button>
+          <button class="action-btn select" onclick="updateTicketStatus('${d.id}','resolved')">Resolve</button>
+          <button class="action-btn reject" onclick="updateTicketStatus('${d.id}','closed')">Close</button>
+        </div>` : ''}
+      </div>`;
+    }).join('');
+  });
+}
+
+window.showNewTicketForm = () => {
+  const f = document.getElementById('newTicketForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+};
+
+window.submitNewTicket = async () => {
+  const cat = document.getElementById('tCat').value;
+  const desc = document.getElementById('tDesc').value.trim();
+  if (!desc) { document.getElementById('tMsg').textContent = 'Please describe the issue.'; document.getElementById('tMsg').style.color = 'var(--red)'; return; }
+  try {
+    await addDoc(collection(db,'tickets'), { userId:currentUser.uid, userName:currentUserData.name||'', userEmail:currentUser.email||'', category:cat, description:desc, status:'open', createdAt:serverTimestamp() });
+    document.getElementById('tMsg').textContent = 'Ticket submitted!'; document.getElementById('tMsg').style.color = 'var(--green)';
+    document.getElementById('tDesc').value = '';
+  } catch(e) { document.getElementById('tMsg').textContent = 'Failed: '+e.message; document.getElementById('tMsg').style.color = 'var(--red)'; }
+};
+
+window.updateTicketStatus = async (id, status) => {
+  await updateDoc(doc(db,'tickets',id), { status, updatedAt: serverTimestamp() }).catch(console.error);
+};
+
+// PARTICIPANTS (Event Head + Management)
+async function renderParticipants(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  let q;
+  if (role === 'event_head') {
+    const ehDocQ = query(collection(db,'staffAccounts'), where('email','==',currentUser.email), where('role','==','event_head'));
+    const ehSnap = await getDocs(ehDocQ);
+    if (ehSnap.empty) { c.innerHTML = '<div style="padding:40px;color:var(--text3);text-align:center">Event head configuration not found.</div>'; return; }
+    const assignedEvent = ehSnap.docs[0].data().eventId;
+    q = query(collection(db,'registrations'), where('eventId','==',assignedEvent), orderBy('createdAt','asc'));
+  } else {
+    q = query(collection(db,'registrations'), orderBy('createdAt','desc'));
+  }
+  
+  const snap = await getDocs(q);
+  const byStatus = { audition_pending:[], selected:[], rejected:[], waitlisted:[] };
+  snap.docs.forEach(d => { const s = d.data().status; if (byStatus[s]) byStatus[s].push({id:d.id,...d.data()}); });
+  
+  const statLabels = { audition_pending:'Audition Pending', selected:'Selected', rejected:'Rejected', waitlisted:'Waitlisted' };
+  const statBadges = { audition_pending:'badge-pending', selected:'badge-selected', rejected:'badge-rejected', waitlisted:'badge-waitlisted' };
+  
+  c.innerHTML = `<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    ${['audition_pending','selected','rejected','waitlisted'].map(s => `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;text-align:center">
+      <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--gold)">${byStatus[s].length}</div>
+      <div style="font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em">${statLabels[s]}</div>
+    </div>`).join('')}
+  </div>
+  <div class="table-wrap">
+    <div class="table-header">
+      <span class="table-title">Participants</span>
+      <input type="text" class="search-input" placeholder="Search..." oninput="filterParticipantTable(this.value)"/>
+    </div>
+    <div style="overflow-x:auto"><table id="participantTable">
+      <thead><tr><th>Name</th><th>Event</th><th>Class</th><th>Status</th>${role !== 'participant' ? '<th>Notes</th><th>Rating</th><th>Actions</th>' : ''}</tr></thead>
+      <tbody>${snap.docs.map(d => {
+        const p = d.data(); const pid = d.id;
+        return `<tr>
+          <td><div class="participant-name">${esc(p.name||'')}</div><div style="font-size:0.72rem;color:var(--text3)">${esc(p.registrationNumber||'')}</div></td>
+          <td style="font-size:0.83rem">${esc(p.eventName||'')}</td>
+          <td style="font-size:0.83rem">${esc(p.className||'')} ${esc(p.sectionName||'')}</td>
+          <td><span class="badge ${statBadges[p.status]||'badge-pending'}">${statLabels[p.status]||p.status}</span></td>
+          ${role !== 'participant' ? `
+          <td><textarea class="notes-input" rows="1" placeholder="Notes..." onchange="saveNotes('${pid}',this.value)">${esc(p.auditionNotes||'')}</textarea></td>
+          <td>${renderStars(p.rating||0, pid)}</td>
+          <td style="white-space:nowrap;display:flex;gap:6px;padding:10px 16px">
+            ${p.status !== 'selected' ? `<button class="action-btn select" onclick="updateParticipantStatus('${pid}','selected')">Select</button>` : ''}
+            ${p.status !== 'rejected' ? `<button class="action-btn reject" onclick="updateParticipantStatus('${pid}','rejected')">Reject</button>` : ''}
+            ${p.status !== 'waitlisted' ? `<button class="action-btn waitlist" onclick="updateParticipantStatus('${pid}','waitlisted')">Waitlist</button>` : ''}
+          </td>` : ''}
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+  </div>`;
+}
+
+function renderStars(rating, pid) {
+  return `<div class="stars">${[1,2,3,4,5].map(n => `<span class="star ${n<=rating?'filled':''}" onclick="saveRating('${pid}',${n})">&#9733;</span>`).join('')}</div>`;
+}
+
+window.saveNotes = async (pid, notes) => {
+  await updateDoc(doc(db,'registrations',pid), { auditionNotes: notes }).catch(console.error);
+};
+window.saveRating = async (pid, rating) => {
+  await updateDoc(doc(db,'registrations',pid), { rating }).catch(console.error);
+  document.querySelectorAll(`[onclick*="saveRating('${pid}"]`).forEach((el, i) => {
+    el.closest('.stars').querySelectorAll('.star').forEach((s,j) => s.classList.toggle('filled', j<rating));
+  });
+};
+window.updateParticipantStatus = async (pid, status) => {
+  if (!confirm(`Are you sure you want to mark this participant as "${status}"?`)) return;
+  try {
+    await updateDoc(doc(db,'registrations',pid), { status, updatedAt: serverTimestamp() });
+    // If rejected, the preset message will show on participant login
+    renderPanel('participants');
+  } catch(e) { alert('Failed: '+e.message); }
+};
+window.filterParticipantTable = (val) => {
+  const rows = document.querySelectorAll('#participantTable tbody tr');
+  rows.forEach(row => { row.style.display = row.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none'; });
+};
+
+// POST ANNOUNCEMENT
+function renderPostAnnounce(c) {
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  const allRoles = ['public','participant','event_head','core_team','teacher','it_team','admin','media_team'];
+  c.innerHTML = `<div class="announce-form">
+    <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:12px">New Announcement</div>
+    <textarea id="announceText" placeholder="Write your announcement..." rows="4"></textarea>
+    <div style="font-size:0.78rem;color:var(--text3);margin:10px 0 6px">Target Audience:</div>
+    <div class="target-checkboxes">
+      ${allRoles.map(r => `<label class="target-check"><input type="checkbox" name="targets" value="${r}"/>${r==='public'?'Public (Index Page)':ROLE_LABELS[r]||r}</label>`).join('')}
+    </div>
+    ${role === 'event_head' ? '<div style="font-size:0.78rem;color:var(--gold);margin-bottom:12px">&#9432; Your announcement will need approval from Teacher-in-Charge before posting.</div>' : ''}
+    <button class="btn-post" onclick="postAnnouncement()">Post Announcement</button>
+    <div id="announceMsg" style="font-size:0.82rem;margin-top:10px"></div>
+  </div>`;
+}
+
+window.postAnnouncement = async () => {
+  const text = document.getElementById('announceText').value.trim();
+  const targets = [...document.querySelectorAll('input[name="targets"]:checked')].map(el => el.value);
+  const msgEl = document.getElementById('announceMsg');
+  if (!text) { msgEl.textContent = 'Please write a message.'; msgEl.style.color = 'var(--red)'; return; }
+  if (targets.length === 0) { msgEl.textContent = 'Please select at least one target audience.'; msgEl.style.color = 'var(--red)'; return; }
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  try {
+    const needsApproval = role === 'event_head';
+    await addDoc(collection(db,'announcements'), {
+      message: text,
+      targetRoles: targets,
+      postedBy: currentUserData.name || '',
+      postedByRole: role,
+      postedById: currentUser.uid,
+      status: needsApproval ? 'pending_approval' : 'published',
+      createdAt: serverTimestamp()
+    });
+    msgEl.textContent = needsApproval ? 'Announcement submitted for Teacher approval.' : 'Announcement posted!';
+    msgEl.style.color = 'var(--green)';
+    document.getElementById('announceText').value = '';
+    document.querySelectorAll('input[name="targets"]').forEach(el => el.checked = false);
+  } catch(e) { msgEl.textContent = 'Failed: '+e.message; msgEl.style.color = 'var(--red)'; }
+};
+
+// BLAST
+function renderBlast(c) {
+  c.innerHTML = `<div class="announce-form">
+    <div style="font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:4px">Send Notification Blast</div>
+    <div style="font-size:0.78rem;color:var(--text3);margin-bottom:12px">This will appear as an announcement to the selected group.</div>
+    <textarea id="blastText" placeholder="Your blast message..." rows="3"></textarea>
+    <div style="font-size:0.78rem;color:var(--text3);margin:10px 0 6px">Select Event (for event-specific blasts):</div>
+    <select id="blastEvent" style="width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--font-body);font-size:0.88rem;margin-bottom:12px">
+      <option value="">All Events</option>
+    </select>
+    <button class="btn-post" onclick="sendBlast()">Send Blast</button>
+    <div id="blastMsg" style="font-size:0.82rem;margin-top:10px"></div>
+  </div>`;
+  
+  getDocs(collection(db,'events')).then(snap => {
+    const sel = document.getElementById('blastEvent');
+    snap.docs.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.data().name || d.id;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+window.sendBlast = async () => {
+  const text = document.getElementById('blastText').value.trim();
+  const eventId = document.getElementById('blastEvent').value;
+  const msgEl = document.getElementById('blastMsg');
+  if (!text) { msgEl.textContent = 'Please write a message.'; msgEl.style.color = 'var(--red)'; return; }
+  const role = currentUserData.activeRole || currentUserData.roles?.[0];
+  try {
+    await addDoc(collection(db,'announcements'), {
+      message: text,
+      targetRoles: ['participant'],
+      targetEventId: eventId || null,
+      postedBy: currentUserData.name || '',
+      postedByRole: role,
+      postedById: currentUser.uid,
+      isBlast: true,
+      status: 'published',
+      createdAt: serverTimestamp()
+    });
+    msgEl.textContent = 'Blast sent!';
+    msgEl.style.color = 'var(--green)';
+    document.getElementById('blastText').value = '';
+  } catch(e) { msgEl.textContent = 'Failed: '+e.message; msgEl.style.color = 'var(--red)'; }
+};
+
+// ANALYTICS
+async function renderAnalytics(c) {
+  const [regSnap, evSnap, usersSnap] = await Promise.all([
+    getDocs(collection(db,'registrations')),
+    getDocs(collection(db,'events')),
+    getDocs(query(collection(db,'users'), where('roles','array-contains','participant')))
+  ]);
+  
+  const byEvent = {};
+  evSnap.docs.forEach(d => { byEvent[d.id] = { name: d.data().name || d.id, total:0, selected:0, rejected:0, pending:0, waitlisted:0 }; });
+  regSnap.docs.forEach(d => {
+    const r = d.data();
+    if (byEvent[r.eventId]) {
+      byEvent[r.eventId].total++;
+      if (r.status === 'selected') byEvent[r.eventId].selected++;
+      else if (r.status === 'rejected') byEvent[r.eventId].rejected++;
+      else if (r.status === 'waitlisted') byEvent[r.eventId].waitlisted++;
+      else byEvent[r.eventId].pending++;
+    }
+  });
+  
+  c.innerHTML = `
+    <div class="stats-grid" style="margin-bottom:28px">
+      <div class="stat-card"><div class="stat-val">${regSnap.size}</div><div class="stat-label">Total Registrations</div></div>
+      <div class="stat-card"><div class="stat-val">${regSnap.docs.filter(d=>d.data().status==='selected').length}</div><div class="stat-label">Selected</div></div>
+      <div class="stat-card"><div class="stat-val">${regSnap.docs.filter(d=>d.data().status==='audition_pending').length}</div><div class="stat-label">Audition Pending</div></div>
+      <div class="stat-card"><div class="stat-val">${regSnap.docs.filter(d=>d.data().status==='rejected').length}</div><div class="stat-label">Not Selected</div></div>
+      <div class="stat-card"><div class="stat-val">${evSnap.size}</div><div class="stat-label">Total Events</div></div>
+      <div class="stat-card"><div class="stat-val">${usersSnap.size}</div><div class="stat-label">Registered Students</div></div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header"><span class="table-title">Event-wise Breakdown</span>
+        <a href="admin.html#export" style="padding:8px 14px;background:linear-gradient(135deg,var(--gold),var(--accent2));color:#fff;border-radius:8px;text-decoration:none;font-size:0.8rem;font-weight:600">Export Data</a>
+      </div>
+      <table>
+        <thead><tr><th>Event</th><th>Total</th><th>Selected</th><th>Pending</th><th>Rejected</th><th>Waitlisted</th></tr></thead>
+        <tbody>${Object.values(byEvent).map(ev => `<tr>
+          <td class="participant-name">${esc(ev.name)}</td>
+          <td>${ev.total}</td>
+          <td style="color:var(--green)">${ev.selected}</td>
+          <td style="color:var(--gold)">${ev.pending}</td>
+          <td style="color:var(--red)">${ev.rejected}</td>
+          <td style="color:var(--blue)">${ev.waitlisted}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+window.ROLE_LABELS = ROLE_LABELS;
+</script>
+</body>
+</html>

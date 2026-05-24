@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal Login — Critically Yours</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #9A7A2E;
+    --green: #2D5016;
+    --green-mid: #3D6B1F;
+    --green-light: #4E8A28;
+    --green-pale: #8FBC5A;
+    --bg-dark: #0D1A06;
+    --bg-card: #111E07;
+    --text-light: #F5F0E8;
+    --text-muted: #B8B09A;
+    --border: rgba(201,168,76,0.25);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .back-link {
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+  .login-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 40%, rgba(77,138,40,0.12) 0%, transparent 70%);
+  }
+  .login-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 52px 48px;
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+    z-index: 2;
+  }
+  .login-logo {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .login-logo img {
+    height: 64px;
+    width: 64px;
+    object-fit: contain;
+    margin-bottom: 12px;
+  }
+  .login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .login-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .google-btn {
+    width: 100%;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: box-shadow 0.2s, transform 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .google-btn:hover { box-shadow: 0 6px 20px rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .google-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .login-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+  .login-note a { color: var(--gold); text-decoration: none; }
+  .role-select-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .role-select-overlay.open { display: flex; }
+  .role-select-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+  }
+  .role-select-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+  .role-select-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+  .role-btn {
+    display: block;
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    color: var(--text-light);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .role-btn:hover {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.07);
+    color: var(--gold);
+  }
+  .role-icon { font-size: 20px; }
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text-light);
+    z-index: 9000;
+    max-width: 320px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { border-left: 3px solid #E05555; }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(201,168,76,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .user-preview {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .user-preview.show { display: flex; }
+  .user-preview img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold-dark);
+  }
+  .up-name { font-weight: 600; color: var(--text-light); font-size: 14px; }
+  .up-email { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">← Back to Home</a>
+
+<div class="login-wrap">
+  <div class="login-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="cys_logo.png" alt="CYS" onerror="this.style.display='none'">
+      <div class="login-title">Critically Yours</div>
+      <div class="login-sub">Staff & Participant Portal Login</div>
+    </div>
+
+    <div class="login-divider"></div>
+
+    <div id="userPreview" class="user-preview">
+      <img src="" id="upImg" alt="Profile">
+      <div>
+        <div class="up-name" id="upName"></div>
+        <div class="up-email" id="upEmail"></div>
+      </div>
+    </div>
+
+    <p class="section-label">Sign in with Google</p>
+    <button class="google-btn" id="googleLoginBtn">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <p class="login-note">
+      Access is granted only to pre-authorized accounts.<br>
+      <a href="index.html">← Return to public site</a>
+    </p>
+  </div>
+</div>
+
+<!-- Role Selector -->
+<div class="role-select-overlay" id="roleOverlay">
+  <div class="role-select-card">
+    <div class="role-select-title">Multiple Roles Detected</div>
+    <p class="role-select-sub">You have multiple roles assigned. Please choose how you want to log in:</p>
+    <div id="roleButtonsContainer"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, collection, getDocs, query, where }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",
+    authDomain: "cys-dpsm.firebaseapp.com",
+    projectId: "cys-dpsm",
+    storageBucket: "cys-dpsm.firebasestorage.app",
+    messagingSenderId: "198853363575",
+    appId: "1:198853363575:web:365ff3bcb9b54b760b4372",
+    measurementId: "G-L17B5VLYHN"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const ROLE_ROUTES = {
+    'IT Team': 'admin.html',
+    'Core Team': 'core.html',
+    'Teacher-in-Charge': 'teacher.html',
+    'Event Head': 'eventhead.html',
+    'Participant': 'participant.html',
+    'Media Team': 'media.html',
+    'Security': 'security.html'
+  };
+
+  const ROLE_ICONS = {
+    'IT Team': '💻', 'Core Team': '⚙️', 'Teacher-in-Charge': '👩‍🏫',
+    'Event Head': '🎤', 'Participant': '🎓', 'Media Team': '📸', 'Security': '🔒'
+  };
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function redirectToRole(role) {
+    sessionStorage.setItem('userRole', role);
+    const route = ROLE_ROUTES[role];
+    if (route) window.location.href = route;
+    else showToast('Unknown role. Contact admin.', 'error');
+  }
+
+  async function handleLogin(user) {
+    const btn = document.getElementById('googleLoginBtn');
+    btn.innerHTML = '<span class="spinner"></span> Verifying access...';
+    btn.disabled = true;
+
+    try {
+      const isAdmin = user.email === 'aaravhfs@gmail.com';
+
+      // Show user preview
+      document.getElementById('upImg').src = user.photoURL || '';
+      document.getElementById('upName').textContent = user.displayName || '';
+      document.getElementById('upEmail').textContent = user.email;
+      document.getElementById('userPreview').classList.add('show');
+
+      if (isAdmin) {
+        sessionStorage.setItem('userRole', 'IT Team');
+        window.location.href = 'admin.html';
+        return;
+      }
+
+      // Check user doc
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+      if (!userDoc.exists()) {
+        // Check if DPSM student wanting participant access
+        if (user.email.endsWith('@dpsmegacity.in')) {
+          // New user - direct to participant path
+          showToast('You are not enrolled in any event yet. Please register on the home page.', 'error');
+          await signOut(auth);
+          btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:20px;height:20px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google`;
+          btn.disabled = false;
+          document.getElementById('userPreview').classList.remove('show');
+          return;
+        }
+        showToast('Access denied. Your account is not authorized.', 'error');
+        await signOut(auth);
+        btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:20px;height:20px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google`;
+        btn.disabled = false;
+        document.getElementById('userPreview').classList.remove('show');
+        return;
+      }
+
+      const userData = userDoc.data();
+      const roles = userData.roles || (userData.role ? [userData.role] : []);
+
+      if (roles.length === 0) {
+        showToast('No role assigned. Contact administrator.', 'error');
+        await signOut(auth);
+        btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:20px;height:20px;flex-shrink:0">...</svg>Continue with Google`;
+        btn.disabled = false;
+        return;
+      }
+
+      if (roles.length === 1) {
+        redirectToRole(roles[0]);
+      } else {
+        // Multiple roles — show selector
+        const container = document.getElementById('roleButtonsContainer');
+        container.innerHTML = '';
+        roles.forEach(role => {
+          const btn2 = document.createElement('button');
+          btn2.className = 'role-btn';
+          btn2.innerHTML = `<span class="role-icon">${ROLE_ICONS[role] || '👤'}</span><span>${role}</span>`;
+          btn2.onclick = () => redirectToRole(role);
+          container.appendChild(btn2);
+        });
+        document.getElementById('roleOverlay').classList.add('open');
+        btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:20px;height:20px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google`;
+        btn.disabled = false;
+      }
+    } catch(e) {
+      showToast('Login error. Please try again.', 'error');
+      btn.innerHTML = `<svg viewBox="0 0 48 48" style="width:20px;height:20px;flex-shrink:0"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Continue with Google`;
+      btn.disabled = false;
+      document.getElementById('userPreview').classList.remove('show');
+    }
+  }
+
+  document.getElementById('googleLoginBtn').onclick = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      await handleLogin(result.user);
+    } catch(e) {
+      if (e.code !== 'auth/popup-closed-by-user') showToast('Sign-in failed. Please try again.', 'error');
+    }
+  };
+
+  // Auto-redirect if already logged in
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const isAdmin = user.email === 'aaravhfs@gmail.com';
+      if (isAdmin) { window.location.href = 'admin.html'; return; }
+      const storedRole = sessionStorage.getItem('userRole');
+      if (storedRole) {
+        const ROLE_ROUTES2 = { 'IT Team':'admin.html','Core Team':'core.html','Teacher-in-Charge':'teacher.html','Event Head':'eventhead.html','Participant':'participant.html','Media Team':'media.html','Security':'security.html' };
+        if (ROLE_ROUTES2[storedRole]) { window.location.href = ROLE_ROUTES2[storedRole]; return; }
+      }
+    }
+  });
+</script>
+</body>
+</html>

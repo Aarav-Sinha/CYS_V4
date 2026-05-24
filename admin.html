@@ -1,970 +1,1001 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard — Critically Yours</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal — Critically Yours</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold:#C9A84C; --gold-light:#E8C97A; --gold-dark:#8B6914; --gold-pale:#F5E6BC;
-  --green:#2D4A2D; --green-light:#3D6B3D; --cream:#FAF6EE;
-  --dark:#1A1208; --text:#2C1F00; --text-muted:#7A6840;
-  --border:rgba(201,168,76,0.25); --sidebar-w:240px;
-  --bg-card:#fff; --error:#DC2626; --success:#16A34A;
-}
+:root{--ag:#4CAF50;--ag2:#66BB6A;--ag3:#A5D6A7;--ag4:#2E7D32;--ag5:#1B5E20;--gold:#D4A843;--gld2:#F0C96B;--bg0:#040C04;--bg1:#071007;--bg2:#0A180A;--bg3:#0E200E;--tw:#F8FBF8;--tm:#9CB89C;--bd:rgba(76,175,80,0.18);--bdg:rgba(212,168,67,0.22);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#F4EFE4;color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;}
-
-/* AUTH GATE */
-#auth-gate{position:fixed;inset:0;z-index:999;background:var(--dark);display:flex;align-items:center;justify-content:center;}
-.auth-card{background:linear-gradient(145deg,#1e1608,#2a1f08);border:1px solid var(--gold-dark);border-radius:20px;padding:48px 40px;max-width:400px;width:90%;text-align:center;}
-.auth-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold-light);margin-bottom:8px;}
-.auth-sub{color:#9A8860;font-size:13px;margin-bottom:28px;}
-.btn-google{width:100%;background:#fff;border:none;border-radius:50px;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:500;color:#333;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 10px rgba(0,0,0,0.3);}
-.btn-google:hover{transform:translateY(-2px);}
-.btn-google svg{width:20px;height:20px;}
-#gate-error{color:#FF6B6B;font-size:13px;margin-top:14px;display:none;}
-.gate-note{margin-top:16px;font-size:12px;color:#6B5E3C;}
-
-/* SIDEBAR */
-#sidebar{width:var(--sidebar-w);background:var(--dark);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid rgba(201,168,76,0.15);}
-.sidebar-brand{padding:28px 20px 20px;border-bottom:1px solid rgba(201,168,76,0.1);}
-.sidebar-brand-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold-light);line-height:1.2;}
-.sidebar-brand-sub{font-size:11px;color:#7A6840;margin-top:4px;}
-.sidebar-user{padding:16px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(201,168,76,0.1);}
-.sidebar-avatar{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);object-fit:cover;}
-.sidebar-uname{font-size:12px;color:var(--gold-light);font-weight:500;}
-.sidebar-role-badge{font-size:10px;color:#7A6840;text-transform:uppercase;letter-spacing:0.5px;}
-.sidebar-nav{flex:1;padding:12px 0;}
-.nav-section-label{padding:12px 20px 6px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#4A3C1C;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:#9A8860;font-size:13px;cursor:pointer;transition:all 0.2s;border-left:3px solid transparent;}
-.nav-item:hover{color:var(--gold-light);background:rgba(201,168,76,0.06);}
-.nav-item.active{color:var(--gold-light);background:rgba(201,168,76,0.1);border-left-color:var(--gold);}
-.nav-item .icon{font-size:16px;width:20px;}
-.sidebar-bottom{padding:16px 20px;border-top:1px solid rgba(201,168,76,0.1);}
-.signout-btn{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);color:#9A8860;padding:10px;border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s;}
-.signout-btn:hover{color:var(--gold-light);border-color:var(--gold);}
-
-/* MAIN */
-#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:none;}
-.topbar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
-.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark);}
-.topbar-actions{display:flex;gap:10px;}
-.btn-sm{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;}
-.btn-gold{background:var(--gold);color:var(--dark);}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-muted);}
-.btn-sm:hover{transform:translateY(-1px);}
-.btn-danger{background:#DC2626;color:#fff;}
-.btn-success{background:#16A34A;color:#fff;}
-.content{padding:32px;}
-
-/* PANELS */
-.panel{display:none;}
-.panel.active{display:block;}
-
-/* STATS ROW */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px;}
-.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;}
-.stat-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--gold-dark);}
-.stat-lbl{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;}
-.stat-sub{font-size:11px;color:var(--text-muted);margin-top:8px;}
-
-/* CARDS */
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
-.card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-
-/* TABLE */
+body{background:var(--bg0);color:var(--tw);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;}
+.sidebar{width:256px;background:rgba(0,0,0,0.35);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;}
+.sb-logo{padding:22px 20px;border-bottom:1px solid var(--bd);}
+.sb-name{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--gold);}
+.sb-role{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ag);margin-top:3px;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--bd);}
+.sb-user img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--ag4);}
+.sb-uname{font-size:13px;font-weight:600;}
+.sb-utag{font-size:11px;color:var(--tm);}
+.sb-nav{flex:1;padding:14px 0;}
+.ni{display:flex;align-items:center;gap:11px;padding:10px 20px;color:var(--tm);font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.ni:hover{color:var(--tw);background:rgba(255,255,255,0.03);}
+.ni.active{color:var(--ag);background:rgba(76,175,80,0.09);border-right:3px solid var(--ag);}
+.ni-icon{font-size:16px;width:20px;text-align:center;}
+.sb-bot{padding:14px 20px;border-top:1px solid var(--bd);}
+.logout{display:flex;align-items:center;gap:9px;color:var(--tm);font-size:13px;cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;padding:7px 0;}
+.logout:hover{color:#E05555;}
+.main{flex:1;margin-left:256px;padding:30px;min-height:100vh;}
+.pg{display:none;}.pg.active{display:block;}
+.ph{margin-bottom:26px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.pt{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--tw);}
+.ps{font-size:13px;color:var(--tm);margin-top:3px;}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:22px;margin-bottom:18px;}
+.ct{font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--tm);margin-bottom:14px;}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px;}
+.stat{background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:18px;text-align:center;}
+.stat-num{font-family:'Cinzel',serif;font-size:36px;font-weight:700;color:var(--ag);line-height:1;}
+.stat-lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tm);margin-top:6px;}
+.btn-g{background:linear-gradient(135deg,var(--ag4),var(--ag2));color:#fff;border:none;border-radius:6px;padding:9px 20px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.5px;font-family:'Outfit',sans-serif;transition:opacity 0.2s;}
+.btn-g:hover{opacity:0.88;}
+.btn-o{background:transparent;color:var(--ag);border:1px solid rgba(76,175,80,0.4);border-radius:6px;padding:9px 20px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;}
+.btn-o:hover{background:rgba(76,175,80,0.08);}
+.btn-red{background:rgba(224,85,85,0.15);color:#E05555;border:1px solid rgba(224,85,85,0.3);border-radius:6px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:11px;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;color:var(--tm);margin-bottom:5px;}
+.fi,.fs{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:6px;color:var(--tw);padding:9px 12px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;}
+.fi:focus,.fs:focus{border-color:var(--ag);}
+.fs option{background:var(--bg1);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:13px;font-weight:500;color:var(--tw);}
+.toggle-sub{font-size:12px;color:var(--tm);margin-top:2px;}
+.toggle{position:relative;display:inline-block;width:42px;height:24px;}
+.toggle input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,0.1);border-radius:12px;transition:0.3s;}
+.slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s;}
+input:checked + .slider{background:var(--ag4);}
+input:checked + .slider::before{transform:translateX(18px);}
 .table-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
-th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);border-bottom:2px solid var(--border);white-space:nowrap;}
-td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
-tr:hover td{background:#FAFAF8;}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge-pending{background:#FEF3C7;color:#92400E;}
-.badge-selected{background:#D1FAE5;color:#065F46;}
-.badge-rejected{background:#FEE2E2;color:#991B1B;}
-.badge-gold{background:var(--gold-pale);color:var(--gold-dark);}
-.badge-blue{background:#DBEAFE;color:#1E40AF;}
-.badge-purple{background:#EDE9FE;color:#5B21B6;}
-
-/* FORMS */
-.form-group{margin-bottom:16px;}
-.form-label{display:block;font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
-.form-input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:#FAFAF8;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;transition:border 0.2s;}
-.form-input:focus{outline:none;border-color:var(--gold);}
-.form-select{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:#FAFAF8;font-size:14px;color:var(--text);cursor:pointer;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.btn-primary{padding:10px 24px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;border-radius:50px;color:var(--dark);font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(201,168,76,0.4);}
-
-/* TOGGLE */
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);}
-.toggle-info{flex:1;}
-.toggle-label{font-size:14px;font-weight:600;color:var(--dark);}
-.toggle-sub{font-size:12px;color:var(--text-muted);margin-top:2px;}
-.toggle{position:relative;width:48px;height:26px;}
-.toggle input{display:none;}
-.toggle-slider{position:absolute;inset:0;background:#CCC;border-radius:13px;cursor:pointer;transition:0.3s;}
-.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:0.3s;}
-.toggle input:checked+.toggle-slider{background:var(--gold);}
-.toggle input:checked+.toggle-slider::before{transform:translateX(22px);}
-
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);color:var(--gold-dark);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;}
-.chip-del{background:none;border:none;color:var(--gold-dark);cursor:pointer;font-size:14px;line-height:1;padding:0;}
-.chip-del:hover{color:#DC2626;}
-
-/* ANALYTICS */
-.event-breakdown{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
-.ev-stat{background:linear-gradient(135deg,var(--dark),#1E1A0A);border:1px solid rgba(201,168,76,0.2);border-radius:14px;padding:20px;}
-.ev-stat-name{font-size:13px;color:var(--gold-light);font-weight:600;margin-bottom:12px;}
-.ev-stat-row{display:flex;justify-content:space-between;font-size:12px;color:#9A8860;margin-bottom:4px;}
-.ev-stat-row span{color:#D4B86A;}
-
-/* ROLES TABLE */
-.role-chip{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin:2px;}
-
-/* ANNOUNCEMENTS */
-.ann-form textarea{resize:vertical;min-height:80px;}
-.target-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-.target-chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;cursor:pointer;transition:all 0.2s;background:#fff;}
-.target-chip.sel{border-color:var(--gold);background:var(--gold-pale);color:var(--gold-dark);font-weight:600;}
-
-/* MESSAGING */
-.msg-layout{display:grid;grid-template-columns:260px 1fr;gap:0;height:calc(100vh - 120px);border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#fff;}
-.msg-list{border-right:1px solid var(--border);overflow-y:auto;}
-.msg-list-header{padding:16px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;color:var(--dark);}
-.msg-thread{padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;}
-.msg-thread:hover,.msg-thread.active{background:#FAFAF8;}
-.msg-thread-name{font-size:13px;font-weight:600;color:var(--dark);}
-.msg-thread-preview{font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.msg-thread-badge{background:var(--gold);color:var(--dark);border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-left:auto;}
-.msg-chat{display:flex;flex-direction:column;height:100%;}
-.msg-chat-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.msg-chat-title{font-weight:600;font-size:14px;color:var(--dark);}
-.msg-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
-.msg-bubble{max-width:75%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;}
-.msg-bubble.me{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--dark);align-self:flex-end;border-bottom-right-radius:4px;}
-.msg-bubble.them{background:#F4EFE4;color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;}
-.msg-sender{font-size:10px;font-weight:600;color:var(--gold-dark);margin-bottom:3px;}
-.msg-role-tag{font-size:9px;color:var(--text-muted);}
-.msg-time{font-size:10px;color:var(--text-muted);margin-top:4px;text-align:right;}
-.msg-input-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;}
-.msg-input{flex:1;padding:10px 14px;border-radius:24px;border:1.5px solid var(--border);font-size:14px;font-family:'DM Sans',sans-serif;}
-.msg-input:focus{outline:none;border-color:var(--gold);}
-.msg-send-btn{background:var(--gold);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--dark);}
-.empty-chat{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:14px;}
-
-/* TICKETS */
-.ticket-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;}
-.ticket-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-.ticket-cat{font-size:11px;font-weight:600;color:var(--gold-dark);text-transform:uppercase;letter-spacing:0.5px;}
-.ticket-status{font-size:11px;padding:3px 10px;border-radius:20px;}
-.ticket-desc{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:10px;}
-.ticket-meta{font-size:11px;color:var(--text-muted);}
-.ticket-actions{display:flex;gap:8px;margin-top:10px;}
-
-.toast{position:fixed;bottom:30px;right:30px;z-index:9999;background:var(--dark);border:1px solid var(--gold-dark);border-radius:10px;padding:14px 20px;color:var(--gold-light);font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,0.3);transform:translateY(100px);transition:transform 0.3s ease;pointer-events:none;}
-.toast.show{transform:translateY(0);}
-
-@media(max-width:900px){#sidebar{width:200px;}#main{margin-left:200px;}}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--tm);border-bottom:1px solid var(--bd);}
+td{padding:11px 14px;border-bottom:1px solid rgba(76,175,80,0.08);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.b-pend{background:rgba(255,166,0,0.15);color:#FFA600;border:1px solid rgba(255,166,0,0.3);}
+.b-sel{background:rgba(76,175,80,0.15);color:#66BB6A;border:1px solid rgba(76,175,80,0.3);}
+.b-rej{background:rgba(224,85,85,0.15);color:#E05555;border:1px solid rgba(224,85,85,0.3);}
+.user-row{display:flex;align-items:center;gap:10px;}
+.user-row img{width:28px;height:28px;border-radius:50%;object-fit:cover;}
+.role-chip{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;background:rgba(76,175,80,0.1);color:var(--ag2);border:1px solid rgba(76,175,80,0.2);}
+.tab-row{display:flex;gap:2px;margin-bottom:18px;border-bottom:1px solid var(--bd);}
+.tb{padding:9px 16px;background:none;border:none;color:var(--tm);font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;font-family:'Outfit',sans-serif;margin-bottom:-1px;}
+.tb.active{color:var(--ag);border-bottom-color:var(--ag);}
+.search-input{background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:6px;color:var(--tw);padding:8px 13px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;width:260px;}
+.search-input:focus{border-color:var(--ag);}
+.chat-wrap{display:flex;flex-direction:column;height:460px;}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.bbl{max-width:72%;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.5;}
+.bbl-out{background:linear-gradient(135deg,var(--ag4),var(--ag2));color:#fff;align-self:flex-end;border-radius:12px 12px 2px 12px;}
+.bbl-in{background:rgba(255,255,255,0.06);color:var(--tw);align-self:flex-start;border-radius:12px 12px 12px 2px;}
+.bbl-sender{font-size:11px;font-weight:600;color:var(--ag);margin-bottom:2px;}
+.bbl-role{font-size:10px;color:var(--tm);}
+.bbl-time{font-size:10px;margin-top:3px;opacity:0.55;}
+.chat-row{display:flex;gap:9px;padding:11px 14px;border-top:1px solid var(--bd);}
+.chat-in{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:7px;padding:9px 13px;color:var(--tw);font-size:13px;font-family:'Outfit',sans-serif;outline:none;}
+.chat-in:focus{border-color:var(--ag);}
+.chat-btn{background:linear-gradient(135deg,var(--ag4),var(--ag2));color:#fff;border:none;border-radius:7px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:600;}
+.event-card-mini{display:flex;align-items:center;gap:14px;padding:13px;background:var(--bg3);border:1px solid var(--bd);border-radius:9px;margin-bottom:10px;}
+.event-card-mini img{width:42px;height:42px;object-fit:contain;}
+.ecm-name{font-size:14px;font-weight:600;color:var(--tw);}
+.ecm-meta{font-size:12px;color:var(--tm);}
+.spinner{width:16px;height:16px;border:2px solid rgba(76,175,80,0.15);border-top-color:var(--ag);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:11px 17px;font-size:13px;color:var(--tw);z-index:9000;max-width:300px;transform:translateY(10px);opacity:0;transition:all 0.28s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.err{border-left:3px solid #E05555;}.toast.ok{border-left:3px solid var(--ag);}
+.ticket-fab{position:fixed;bottom:28px;right:28px;background:linear-gradient(135deg,var(--ag4),var(--ag));color:#fff;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px rgba(76,175,80,0.4);z-index:800;}
+.timeline-item-edit{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd);}
+.timeline-item-edit:last-child{border-bottom:none;}
+.conv-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--bd);transition:background 0.15s;}
+.conv-item:hover{background:rgba(255,255,255,0.03);}
+.conv-item img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
+.conv-name{font-size:13px;font-weight:600;}.conv-role{font-size:11px;color:var(--tm);}
 </style>
 </head>
 <body>
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-name">Critically Yours</div>
+    <div class="sb-role">Admin · IT Team</div>
+  </div>
+  <div class="sb-user">
+    <img src="" id="sbImg" alt=""><div><div class="sb-uname" id="sbName">Loading…</div><div class="sb-utag">Administrator</div></div>
+  </div>
+  <nav class="sb-nav">
+    <button class="ni active" data-pg="dashboard"><span class="ni-icon">📊</span> Dashboard</button>
+    <button class="ni" data-pg="events"><span class="ni-icon">🎭</span> Events</button>
+    <button class="ni" data-pg="users"><span class="ni-icon">👥</span> Users & Roles</button>
+    <button class="ni" data-pg="registrations"><span class="ni-icon">📋</span> Registrations</button>
+    <button class="ni" data-pg="announcements"><span class="ni-icon">📢</span> Announcements</button>
+    <button class="ni" data-pg="messages"><span class="ni-icon">💬</span> Messages</button>
+    <button class="ni" data-pg="tickets"><span class="ni-icon">🎫</span> Tickets</button>
+    <button class="ni" data-pg="settings"><span class="ni-icon">⚙️</span> Settings</button>
+    <button class="ni" data-pg="security"><span class="ni-icon">🔒</span> Security / QR</button>
+  </nav>
+  <div class="sb-bot"><button class="logout" id="logoutBtn">🚪 Sign Out</button></div>
+</div>
 
-<div id="auth-gate">
-  <div class="auth-card">
-    <div class="auth-title">Admin Access Required</div>
-    <div class="auth-sub">Sign in with your authorized admin account.</div>
-    <button class="btn-google" onclick="signInWithGoogle()">
-      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with Google
-    </button>
-    <div class="gate-note">Admin & IT Team access only</div>
-    <div id="gate-error"></div>
+<div class="main">
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="pg active" id="pg-dashboard">
+  <div class="ph"><div><div class="pt">Dashboard</div><div class="ps">Real-time analytics overview.</div></div>
+    <button class="btn-g" id="exportAllBtn">⬇ Export All CSV</button></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num" id="s-total">–</div><div class="stat-lbl">Total Registered</div></div>
+    <div class="stat"><div class="stat-num" id="s-sel">–</div><div class="stat-lbl">Selected</div></div>
+    <div class="stat"><div class="stat-num" id="s-pend">–</div><div class="stat-lbl">Pending Audition</div></div>
+    <div class="stat"><div class="stat-num" id="s-rej">–</div><div class="stat-lbl">Rejected</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Event-Wise Breakdown</div>
+    <div id="eventBreakdown"><span class="spinner"></span> Loading…</div>
   </div>
 </div>
 
-<aside id="sidebar" style="display:none">
-  <div class="sidebar-brand">
-    <div class="sidebar-brand-title">Critically Yours</div>
-    <div class="sidebar-brand-sub">Admin Dashboard</div>
+<!-- ═══ EVENTS ═══ -->
+<div class="pg" id="pg-events">
+  <div class="ph"><div><div class="pt">Events</div><div class="ps">Add and manage fest events.</div></div></div>
+  <div class="card">
+    <div class="ct">Add New Event</div>
+    <div class="frow"><div class="fg"><label class="fl">Event Name</label><input type="text" class="fi" id="evName" placeholder="e.g. Debate"></div>
+    <div class="fg"><label class="fl">Category</label><input type="text" class="fi" id="evCat" placeholder="e.g. Literary"></div></div>
+    <div class="fg"><label class="fl">Description</label><input type="text" class="fi" id="evDesc" placeholder="Short description"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Logo Filename (with extension)</label><input type="text" class="fi" id="evLogo" placeholder="e.g. debate_logo.png"></div>
+      <div class="fg"><label class="fl">Max Participants</label><input type="number" class="fi" id="evMax" placeholder="e.g. 30"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Order (display position)</label><input type="number" class="fi" id="evOrder" placeholder="1"></div>
+      <div class="fg"><label class="fl">Event Head 1 Email</label><input type="text" class="fi" id="evH1" placeholder="head1@dpsmegacity.in"></div>
+    </div>
+    <div class="fg"><label class="fl">Event Head 2 Email</label><input type="text" class="fi" id="evH2" placeholder="head2@dpsmegacity.in"></div>
+    <button class="btn-g" id="addEventBtn">Add Event</button>
   </div>
-  <div class="sidebar-user">
-    <img class="sidebar-avatar" id="s-avatar" src="" alt="">
-    <div>
-      <div class="sidebar-uname" id="s-name"></div>
-      <div class="sidebar-role-badge" id="s-role-badge">Admin / IT Team</div>
+  <div class="card">
+    <div class="ct">Existing Events</div>
+    <div id="eventList"><span class="spinner"></span> Loading…</div>
+  </div>
+</div>
+
+<!-- ═══ USERS & ROLES ═══ -->
+<div class="pg" id="pg-users">
+  <div class="ph"><div><div class="pt">Users &amp; Roles</div><div class="ps">Manage staff accounts and permissions.</div></div></div>
+  <div class="card">
+    <div class="ct">Add / Invite Staff Member</div>
+    <div class="frow3">
+      <div class="fg"><label class="fl">Full Name</label><input type="text" class="fi" id="uName" placeholder="Name"></div>
+      <div class="fg"><label class="fl">Email Address</label><input type="email" class="fi" id="uEmail" placeholder="email@domain.com"></div>
+      <div class="fg"><label class="fl">Primary Role</label>
+        <select class="fs" id="uRole">
+          <option value="">Select Role</option>
+          <option>IT Team</option><option>Core Team</option>
+          <option>Teacher-in-Charge</option><option>Event Head</option>
+          <option>Media Team</option><option>Security</option>
+        </select>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Secondary Role (optional)</label>
+        <select class="fs" id="uRole2"><option value="">None</option>
+          <option>IT Team</option><option>Core Team</option><option>Teacher-in-Charge</option>
+          <option>Event Head</option><option>Media Team</option><option>Security</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Assigned Event (if Event Head)</label>
+        <select class="fs" id="uEvent"><option value="">None</option></select>
+      </div>
+    </div>
+    <button class="btn-g" id="addUserBtn">Add User</button>
+  </div>
+  <div class="card">
+    <div class="ct" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Staff Members</span>
+      <input type="text" class="search-input" id="userSearch" placeholder="Search by name or email…">
+    </div>
+    <div class="table-wrap"><table id="usersTable">
+      <thead><tr><th>User</th><th>Role(s)</th><th>Event</th><th>Email</th><th>Actions</th></tr></thead>
+      <tbody id="usersBody"><tr><td colspan="5"><span class="spinner"></span> Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <div class="ct">Role Permissions</div>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:16px;">Toggle what each role can do.</p>
+    <div id="permissionsPanel"><span class="spinner"></span> Loading…</div>
+  </div>
+</div>
+
+<!-- ═══ REGISTRATIONS ═══ -->
+<div class="pg" id="pg-registrations">
+  <div class="ph"><div><div class="pt">Registrations</div><div class="ps">All participant registrations.</div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-g" id="exportRegBtn">⬇ Export CSV</button>
+      <select class="fs" id="filterEvent" style="width:180px;"><option value="">All Events</option></select>
+      <select class="fs" id="filterStatus" style="width:160px;">
+        <option value="">All Statuses</option>
+        <option>Audition Pending</option><option>Auditioning</option><option>Selected</option><option>Rejected</option>
+      </select>
     </div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">Overview</div>
-    <div class="nav-item active" onclick="showPanel('analytics')" id="nav-analytics"><span class="icon">📊</span> Analytics</div>
-    <div class="nav-item" onclick="showPanel('tickets')" id="nav-tickets"><span class="icon">🎫</span> Tickets</div>
-    <div class="nav-section-label">Manage</div>
-    <div class="nav-item" onclick="showPanel('events')" id="nav-events"><span class="icon">🎭</span> Events</div>
-    <div class="nav-item" onclick="showPanel('registrations')" id="nav-registrations"><span class="icon">📋</span> Registrations</div>
-    <div class="nav-item" onclick="showPanel('roles')" id="nav-roles"><span class="icon">👥</span> Roles & Access</div>
-    <div class="nav-section-label">Content</div>
-    <div class="nav-item" onclick="showPanel('announcements')" id="nav-announcements"><span class="icon">📢</span> Announcements</div>
-    <div class="nav-item" onclick="showPanel('timeline')" id="nav-timeline"><span class="icon">📅</span> Timeline</div>
-    <div class="nav-item" onclick="showPanel('messaging')" id="nav-messaging"><span class="icon">💬</span> Messages</div>
-    <div class="nav-section-label">Settings</div>
-    <div class="nav-item" onclick="showPanel('settings')" id="nav-settings"><span class="icon">⚙️</span> Global Settings</div>
-    <div class="nav-item" onclick="showPanel('classes')" id="nav-classes"><span class="icon">🏫</span> Classes & Teachers</div>
-  </nav>
-  <div class="sidebar-bottom">
-    <a href="index.html" style="display:block;text-align:center;color:var(--gold);font-size:12px;margin-bottom:10px;text-decoration:none">← Back to Website</a>
-    <button class="signout-btn" onclick="doSignOut()">Sign Out</button>
+  <div class="card">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Class</th><th>Event</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
+      <tbody id="regBody"><tr><td colspan="6"><span class="spinner"></span> Loading…</td></tr></tbody>
+    </table></div>
   </div>
-</aside>
+</div>
 
-<main id="main">
-  <div class="topbar">
-    <div class="topbar-title" id="topbar-title">Analytics</div>
-    <div class="topbar-actions">
-      <button class="btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
+<!-- ═══ ANNOUNCEMENTS ═══ -->
+<div class="pg" id="pg-announcements">
+  <div class="ph"><div><div class="pt">Announcements</div><div class="ps">Post and manage announcements.</div></div></div>
+  <div class="card">
+    <div class="ct">New Announcement</div>
+    <div class="fg"><label class="fl">Title</label><input type="text" class="fi" id="annTitle" placeholder="Announcement title"></div>
+    <div class="fg"><label class="fl">Body</label><textarea class="fi" id="annBody" rows="3" placeholder="Full announcement text…" style="resize:vertical;"></textarea></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Target Event (or All)</label>
+        <select class="fs" id="annEvent"><option value="*">All Events / Fest-wide</option></select>
+      </div>
+      <div class="fg"><label class="fl">Target Role</label>
+        <select class="fs" id="annRole"><option value="all">Everyone</option><option>Participant</option><option>Event Head</option><option>Core Team</option><option>IT Team</option><option>Teacher-in-Charge</option><option>Media Team</option></select>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" id="annPublic" style="accent-color:var(--ag);"> Visible on public site</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" id="annSelOnly" style="accent-color:var(--ag);"> Selected participants only</label>
+    </div>
+    <button class="btn-g" id="postAnnBtn">Post Announcement</button>
+  </div>
+  <div class="card">
+    <div class="ct">All Announcements</div>
+    <div id="annList"><span class="spinner"></span> Loading…</div>
+  </div>
+</div>
+
+<!-- ═══ MESSAGES ═══ -->
+<div class="pg" id="pg-messages">
+  <div class="ph"><div><div class="pt">Messages</div><div class="ps">Global messaging — you can reach anyone.</div></div></div>
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:18px;height:520px;">
+    <div class="card" style="padding:0;overflow-y:auto;height:520px;">
+      <div style="padding:12px 14px;border-bottom:1px solid var(--bd);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--tm);">Conversations</div>
+      <div id="convList">
+        <div class="conv-item" data-chat="broadcast_management" data-name="All Management" data-role="Broadcast">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--ag4);display:flex;align-items:center;justify-content:center;font-size:14px;">⚙️</div>
+          <div><div class="conv-name">Management Group</div><div class="conv-role">IT + Core + Teacher</div></div>
+        </div>
+        <div class="conv-item" data-chat="broadcast_eventhead" data-name="All Event Heads" data-role="Broadcast">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--ag4);display:flex;align-items:center;justify-content:center;font-size:14px;">🎤</div>
+          <div><div class="conv-name">All Event Heads</div><div class="conv-role">Broadcast</div></div>
+        </div>
+        <div class="conv-item" data-chat="broadcast_all" data-name="Entire Fest" data-role="Broadcast">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--ag4);display:flex;align-items:center;justify-content:center;font-size:14px;">🌐</div>
+          <div><div class="conv-name">Entire Fest</div><div class="conv-role">Broadcast to all</div></div>
+        </div>
+      </div>
+      <div id="dmList"></div>
+    </div>
+    <div class="card" style="padding:0;display:flex;flex-direction:column;height:520px;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;">
+        <img src="" id="activeChatImg" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:1px solid var(--bd);" alt="">
+        <div><div style="font-size:13px;font-weight:600;" id="activeChatName">Select a conversation</div>
+        <div style="font-size:11px;color:var(--tm);" id="activeChatRole"></div></div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-row">
+        <input type="text" class="chat-in" id="chatIn" placeholder="Type a message…" maxlength="1000">
+        <button class="chat-btn" id="chatSend">Send</button>
+      </div>
     </div>
   </div>
-  <div class="content">
+</div>
 
-    <!-- ANALYTICS -->
-    <div class="panel active" id="panel-analytics">
-      <div class="stats-row" id="stats-row"></div>
-      <div class="card">
-        <div class="card-title">Registrations by Event</div>
-        <div class="event-breakdown" id="event-breakdown"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Recent Registrations</div>
-        <div class="table-wrap">
-          <table id="recent-regs-table">
-            <thead><tr><th>Name</th><th>Class</th><th>Event</th><th>Status</th><th>Date</th></tr></thead>
-            <tbody id="recent-regs-body"></tbody>
-          </table>
-        </div>
-      </div>
+<!-- ═══ TICKETS ═══ -->
+<div class="pg" id="pg-tickets">
+  <div class="ph"><div><div class="pt">Support Tickets</div><div class="ps">Manage all support requests.</div></div></div>
+  <div class="tab-row">
+    <button class="tb active" data-tf="Open">Open</button>
+    <button class="tb" data-tf="In Progress">In Progress</button>
+    <button class="tb" data-tf="Resolved">Resolved</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Subject</th><th>From</th><th>Role</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+      <tbody id="ticketBody"><tr><td colspan="6"><span class="spinner"></span> Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div class="pg" id="pg-settings">
+  <div class="ph"><div><div class="pt">Settings</div><div class="ps">Global fest configuration.</div></div>
+    <button class="btn-g" id="saveSettingsBtn">💾 Save All Settings</button></div>
+
+  <div class="card">
+    <div class="ct">Unofficial Banner</div>
+    <div class="toggle-row">
+      <div><div class="toggle-label">Show Unofficial Banner</div><div class="toggle-sub">Displays warning banner on the public site</div></div>
+      <label class="toggle"><input type="checkbox" id="tBanner"><span class="slider"></span></label>
     </div>
-
-    <!-- EVENTS -->
-    <div class="panel" id="panel-events">
-      <div class="card">
-        <div class="card-title">Add New Event</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Event Name</label><input class="form-input" id="ev-name" placeholder="e.g. Debate Competition"></div>
-          <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="ev-cat" placeholder="e.g. Literary"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Logo Filename (with extension)</label><input class="form-input" id="ev-logo" placeholder="e.g. debate_logo.png"></div>
-          <div class="form-group"><label class="form-label">Slots Available</label><input class="form-input" type="number" id="ev-slots" placeholder="e.g. 20"></div>
-        </div>
-        <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="ev-desc" placeholder="Short description of the event"></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Venue</label><input class="form-input" id="ev-venue" placeholder="e.g. Auditorium"></div>
-          <div class="form-group"><label class="form-label">Date & Time</label><input class="form-input" type="datetime-local" id="ev-datetime"></div>
-        </div>
-        <div class="form-group"><label class="form-label">Rules (one per line)</label><textarea class="form-input" id="ev-rules" rows="4" placeholder="List event-specific rules, one per line..."></textarea></div>
-        <button class="btn-primary" onclick="addEvent()">Add Event</button>
-      </div>
-      <div class="card">
-        <div class="card-title">All Events</div>
-        <div class="table-wrap">
-          <table><thead><tr><th>Name</th><th>Category</th><th>Slots</th><th>Registrations</th><th>Actions</th></tr></thead>
-          <tbody id="events-table-body"></tbody></table>
-        </div>
-      </div>
+    <div class="fg" style="margin-top:12px;">
+      <label class="fl">Banner Text</label>
+      <input type="text" class="fi" id="bannerText" value="This website is not the official website for now. It will be official once approved by school authorities.">
     </div>
+  </div>
 
-    <!-- REGISTRATIONS -->
-    <div class="panel" id="panel-registrations">
-      <div class="card">
-        <div class="card-title">
-          All Registrations
-          <div style="display:flex;gap:8px">
-            <select class="form-select" style="width:auto;padding:6px 12px" id="reg-filter-event" onchange="filterRegs()"><option value="">All Events</option></select>
-            <select class="form-select" style="width:auto;padding:6px 12px" id="reg-filter-status" onchange="filterRegs()">
-              <option value="">All Statuses</option>
-              <option value="audition_pending">Audition Pending</option>
-              <option value="selected">Selected</option>
-              <option value="rejected">Rejected</option>
-            </select>
-            <button class="btn-sm btn-outline" onclick="exportRegsCSV()">Export</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table><thead><tr><th>Photo</th><th>Name</th><th>Class</th><th>Sec</th><th>Event</th><th>Status</th><th>Email</th><th>Phone</th><th>Actions</th></tr></thead>
-          <tbody id="regs-table-body"></tbody></table>
-        </div>
-      </div>
+  <div class="card">
+    <div class="ct">Photo Overlay Slideshow</div>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:14px;">Add the filenames (with extension) of images deployed on the server. They will appear as a slideshow when users first visit the site.</p>
+    <div id="overlayImgList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <input type="text" class="fi" id="newOverlayImg" placeholder="e.g. dpsm_event.jpg" style="flex:1;">
+      <button class="btn-g" id="addOverlayImgBtn">+ Add Image</button>
     </div>
+  </div>
 
-    <!-- ROLES & ACCESS -->
-    <div class="panel" id="panel-roles">
-      <div class="card">
-        <div class="card-title">Assign / Update Role</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Google Email</label><input class="form-input" id="role-email" placeholder="user@dpsmegacity.in or custom"></div>
-          <div class="form-group"><label class="form-label">Display Name</label><input class="form-input" id="role-dname" placeholder="Full name"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Role(s)</label>
-            <select class="form-select" id="role-select" multiple style="height:120px">
-              <option value="it_team">IT Team</option>
-              <option value="core">Core Team</option>
-              <option value="teacher">Teacher-in-Charge</option>
-              <option value="event_head">Event Head</option>
-              <option value="media">Media Team</option>
-              <option value="security">Security</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Event (if Event Head)</label>
-            <select class="form-select" id="role-event"><option value="">N/A</option></select>
-          </div>
-        </div>
-        <button class="btn-primary" onclick="assignRole()">Save Role</button>
-      </div>
-      <div class="card">
-        <div class="card-title">Whitelisted Non-DPS Emails</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Email to Whitelist</label><input class="form-input" id="whitelist-email" placeholder="external@gmail.com"></div>
-          <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="addWhitelist()">Add</button></div>
-        </div>
-        <div class="chips" id="whitelist-chips"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">All Role Assignments</div>
-        <div class="table-wrap">
-          <table><thead><tr><th>Name</th><th>Email</th><th>Roles</th><th>Event</th><th>Actions</th></tr></thead>
-          <tbody id="roles-table-body"></tbody></table>
-        </div>
-      </div>
+  <div class="card">
+    <div class="ct">Enrollment Status</div>
+    <div class="fg"><label class="fl">Registration Status</label>
+      <select class="fs" id="enrollStatus">
+        <option value="open">Open (accepting registrations)</option>
+        <option value="maintenance">Under Maintenance</option>
+        <option value="closed">Closed</option>
+      </select>
     </div>
+  </div>
 
-    <!-- ANNOUNCEMENTS -->
-    <div class="panel" id="panel-announcements">
-      <div class="card ann-form">
-        <div class="card-title">Post Announcement</div>
-        <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="ann-text" rows="4" placeholder="Type your announcement..."></textarea></div>
-        <div class="form-group">
-          <label class="form-label">Target Audience</label>
-          <div class="target-chips">
-            <div class="target-chip" data-t="public" onclick="toggleTarget(this)">🌐 Public (Index Page)</div>
-            <div class="target-chip" data-t="all" onclick="toggleTarget(this)">👥 All Members</div>
-            <div class="target-chip" data-t="participant" onclick="toggleTarget(this)">🎭 Participants</div>
-            <div class="target-chip" data-t="event_head" onclick="toggleTarget(this)">🎯 Event Heads</div>
-            <div class="target-chip" data-t="core" onclick="toggleTarget(this)">⚡ Core Team</div>
-            <div class="target-chip" data-t="media" onclick="toggleTarget(this)">📷 Media Team</div>
-            <div class="target-chip" data-t="teacher" onclick="toggleTarget(this)">👩‍🏫 Teachers</div>
-          </div>
-        </div>
-        <button class="btn-primary" onclick="postAnnouncement()">Post Announcement</button>
-      </div>
-      <div class="card">
-        <div class="card-title">All Announcements</div>
-        <div id="ann-list-admin"></div>
-      </div>
+  <div class="card">
+    <div class="ct">Fest Details</div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Fest Subtitle</label><input type="text" class="fi" id="festSubtitle" placeholder="The Intraschool Humanities Festival"></div>
+      <div class="fg"><label class="fl">Event Date</label><input type="datetime-local" class="fi" id="festDate"></div>
     </div>
-
-    <!-- TIMELINE -->
-    <div class="panel" id="panel-timeline">
-      <div class="card">
-        <div class="card-title">Add Timeline Item</div>
-        <div class="form-3">
-          <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="tl-date" placeholder="e.g. 15 Nov 2025"></div>
-          <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="tl-title" placeholder="e.g. Registration Opens"></div>
-          <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="tl-desc" placeholder="Short detail"></div>
-        </div>
-        <input type="number" class="form-input" id="tl-order" placeholder="Order (1,2,3...)" style="width:120px">
-        <button class="btn-primary" style="margin-top:12px" onclick="addTimeline()">Add</button>
-      </div>
-      <div class="card">
-        <div class="card-title">Timeline Items</div>
-        <div id="tl-list"></div>
-      </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Venue Name</label><input type="text" class="fi" id="venueName" placeholder="Main Hall"></div>
+      <div class="fg"><label class="fl">Venue Address</label><input type="text" class="fi" id="venueAddr" placeholder="Full address"></div>
     </div>
-
-    <!-- MESSAGING -->
-    <div class="panel" id="panel-messaging">
-      <div class="msg-layout">
-        <div class="msg-list">
-          <div class="msg-list-header">💬 Conversations</div>
-          <div id="msg-threads"></div>
-        </div>
-        <div class="msg-chat" id="msg-chat">
-          <div class="empty-chat">Select a conversation or start a new one</div>
-        </div>
-      </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Venue Date (display)</label><input type="text" class="fi" id="venueDateDisp" placeholder="e.g. 15 March 2025"></div>
+      <div class="fg"><label class="fl">Venue Time (display)</label><input type="text" class="fi" id="venueTime" placeholder="e.g. 9:00 AM"></div>
     </div>
+  </div>
 
-    <!-- TICKETS -->
-    <div class="panel" id="panel-tickets">
-      <div class="card">
-        <div class="card-title">Support Tickets</div>
-        <div id="tickets-list"></div>
-      </div>
+  <div class="card">
+    <div class="ct">Timeline</div>
+    <div id="timelineEdit" style="margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <input type="text" class="fi" id="tlDate" placeholder="Date label (e.g. 10 March)" style="width:180px;">
+      <input type="text" class="fi" id="tlTitle" placeholder="Event title" style="flex:1;">
+      <button class="btn-g" id="addTlBtn">+ Add</button>
     </div>
+  </div>
 
-    <!-- SETTINGS -->
-    <div class="panel" id="panel-settings">
-      <div class="card">
-        <div class="card-title">Global Settings</div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-label">Show Non-@dpsmegacity.in Accounts in Login</div><div class="toggle-sub">When ON: Google login popup shows all accounts. When OFF: only school accounts shown. Admin aaravhfs@gmail.com is always allowed.</div></div>
-          <label class="toggle"><input type="checkbox" id="toggle-nondps" onchange="saveToggle('showNonDPSAccounts',this.checked)"><span class="toggle-slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-label">Enrollment Open</div><div class="toggle-sub">Control whether students can enroll.</div></div>
-          <select class="form-select" style="width:200px" id="enrollment-status" onchange="saveEnrollmentStatus()">
-            <option value="open">Open</option>
-            <option value="closed">Closed</option>
-            <option value="maintenance">Maintenance</option>
-          </select>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info"><div class="toggle-label">Event Date</div><div class="toggle-sub">Set the main fest date for countdown.</div></div>
-          <input type="date" class="form-input" style="width:200px" id="event-date-input" onchange="saveEventDate()">
-        </div>
-        <div class="form-group" style="margin-top:20px"><label class="form-label">Venue Address</label><input class="form-input" id="venue-addr" placeholder="Full venue address"><button class="btn-primary" style="margin-top:8px" onclick="saveVenue()">Save Venue</button></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Rejected Participant Message (Auto-sent on rejection)</div>
-        <div class="form-group"><textarea class="form-input" id="reject-msg" rows="4" placeholder="Dear [Name], we regret to inform you..."></textarea></div>
-        <button class="btn-primary" onclick="saveRejectMsg()">Save Message</button>
-      </div>
+  <div class="card">
+    <div class="ct">Rules &amp; Regulations</div>
+    <div id="rulesEdit" style="margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <input type="text" class="fi" id="ruleBlockTitle" placeholder="Block title (e.g. General Rules)" style="flex:1;">
     </div>
-
-    <!-- CLASSES & TEACHERS -->
-    <div class="panel" id="panel-classes">
-      <div class="card">
-        <div class="card-title">Classes</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Add Class</label><input class="form-input" id="add-class" placeholder="e.g. IX"></div>
-          <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="addClass()">Add</button></div>
-        </div>
-        <div class="chips" id="class-chips"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Sections & Class Teachers</div>
-        <div class="form-group"><label class="form-label">Class</label>
-          <select class="form-select" id="sec-class" onchange="loadSecList()" style="max-width:200px">
-            <option value="">Select Class</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Add Section</label><input class="form-input" id="add-sec" placeholder="e.g. A"></div>
-          <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn-primary" onclick="addSection()">Add Section</button></div>
-        </div>
-        <div class="chips" id="sec-chips"></div>
-        <div class="card-title" style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">Class Teacher Mapping</div>
-        <div id="teacher-mapping"></div>
-        <div class="form-3">
-          <div class="form-group"><label class="form-label">Class</label><select class="form-select" id="ct-class"><option value="">Select</option></select></div>
-          <div class="form-group"><label class="form-label">Section</label><input class="form-input" id="ct-sec" placeholder="e.g. A"></div>
-          <div class="form-group"><label class="form-label">Teacher Name</label><input class="form-input" id="ct-name" placeholder="Full name"></div>
-        </div>
-        <button class="btn-primary" onclick="saveTeacher()">Save Teacher Mapping</button>
-      </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <input type="text" class="fi" id="ruleItem" placeholder="Add a rule item" style="flex:1;">
+      <button class="btn-g" id="addRuleBtn">+ Add Rule</button>
     </div>
+    <button class="btn-o" id="saveRuleBlockBtn">Save Rule Block</button>
+  </div>
 
-  </div><!-- /content -->
-</main>
+  <div class="card">
+    <div class="ct">Class &amp; Section Configuration</div>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:14px;">Add classes with their sections and teachers.</p>
+    <div class="frow">
+      <div class="fg"><label class="fl">Class Name (e.g. IX, XI)</label><input type="text" class="fi" id="newClass" placeholder="IX"></div>
+      <div class="fg"><label class="fl">Section Name</label><input type="text" class="fi" id="newSection" placeholder="A"></div>
+    </div>
+    <div class="fg"><label class="fl">Class Teacher Name</label><input type="text" class="fi" id="newTeacher" placeholder="Ms. Sharma"></div>
+    <button class="btn-g" id="addClassBtn">Add Section</button>
+    <div id="classList" style="margin-top:16px;"></div>
+  </div>
+</div>
 
+<!-- ═══ SECURITY ═══ -->
+<div class="pg" id="pg-security">
+  <div class="ph"><div><div class="pt">Security &amp; Attendance</div><div class="ps">Scan QR codes and view attendance logs.</div></div></div>
+  <div class="card" style="text-align:center;">
+    <div class="ct">QR Scanner</div>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:16px;">Use the Security portal for full scanning functionality.</p>
+    <a href="security.html" class="btn-g" style="text-decoration:none;display:inline-block;">Open Security Portal →</a>
+  </div>
+  <div class="card">
+    <div class="ct">Attendance Logs</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Name</th><th>Role</th><th>Event</th><th>Scanned At</th><th>Scanned By</th></tr></thead>
+      <tbody id="attendanceBody"><tr><td colspan="5"><span class="spinner"></span> Loading…</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+</div><!-- /main -->
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+         query, where, orderBy, onSnapshot, serverTimestamp, limit }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",
-  authDomain: "cys-dpsm.firebaseapp.com", projectId: "cys-dpsm",
-  storageBucket: "cys-dpsm.firebasestorage.app", messagingSenderId: "198853363675",
-  appId: "1:198853363575:web:365ff3bcb9b54b760b4372", measurementId: "G-L17B5VLYHN"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const ADMIN_EMAIL = "aaravhfs@gmail.com";
-const ALLOWED_ROLES = ["admin","it_team","core","teacher"];
-let currentUser = null;
-let allRegs = [];
-let currentChatId = null;
+const FB={apiKey:"AIzaSyCogmTX4tW4EZfTqsMunRu3XuuOTBDKN-E",authDomain:"cys-dpsm.firebaseapp.com",projectId:"cys-dpsm",storageBucket:"cys-dpsm.firebasestorage.app",messagingSenderId:"198853363575",appId:"1:198853363575:web:365ff3bcb9b54b760b4372"};
+const app=initializeApp(FB);const db=getFirestore(app);const auth=getAuth(app);
+let CU=null,allEventsData={},settingsData={},activeChatId=null,activeChatUnsub=null;
+let currentTicketFilter='Open',overlayImages=[];
+let ruleItems=[];
 
-onAuthStateChanged(auth, async user => {
-  if (!user) return;
-  // Check access
-  const roleDoc = await getDoc(doc(db, "user_roles", user.uid));
-  let hasAccess = user.email === ADMIN_EMAIL;
-  if (roleDoc.exists()) {
-    const roles = roleDoc.data().roles || [];
-    hasAccess = hasAccess || roles.some(r => ALLOWED_ROLES.includes(r));
+function toast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+type;setTimeout(()=>t.classList.remove('show'),3400);}
+
+/* ── AUTH GUARD ── */
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href='portal-login.html';return;}
+  const isAdmin=user.email==='aaravhfs@gmail.com';
+  if(!isAdmin){
+    const ud=await getDoc(doc(db,'users',user.uid));
+    if(!ud.exists()||!['IT Team','Core Team','Teacher-in-Charge'].includes(ud.data().role)){
+      window.location.href='portal-login.html';return;
+    }
   }
-  if (!hasAccess) { showGateError("Access denied. Admin/IT/Core/Teacher only."); await fbSignOut(auth); return; }
-  currentUser = user;
-  hideGate();
-  setupUI(user);
-  loadAllData();
+  CU=user;
+  document.getElementById('sbImg').src=user.photoURL||'';
+  document.getElementById('sbName').textContent=user.displayName||'';
+  initAll();
 });
 
-window.signInWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  try { await signInWithPopup(auth, provider); }
-  catch(e) { showGateError(e.message); }
-};
-window.doSignOut = async () => { await fbSignOut(auth); location.reload(); };
-
-function hideGate() { document.getElementById("auth-gate").style.display = "none"; document.getElementById("sidebar").style.display = ""; document.getElementById("main").style.display = ""; }
-function showGateError(msg) { const el = document.getElementById("gate-error"); el.textContent = msg; el.style.display = "block"; }
-
-function setupUI(user) {
-  document.getElementById("s-name").textContent = user.displayName || user.email;
-  if (user.photoURL) document.getElementById("s-avatar").src = user.photoURL;
+async function initAll(){
+  loadDashboard();loadEvents();loadUsers();loadRegistrations();
+  loadAnnouncements();loadTickets();loadSettings();loadAttendance();loadDMList();
 }
 
-window.showPanel = function(name) {
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-  document.getElementById(`panel-${name}`).classList.add("active");
-  document.getElementById(`nav-${name}`)?.classList.add("active");
-  document.getElementById("topbar-title").textContent = name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g,' ');
-  if (name === "registrations") renderRegs();
-  if (name === "messaging") initMessaging();
-  if (name === "tickets") loadTickets();
-  if (name === "announcements") loadAnnouncements();
-  if (name === "timeline") loadTimeline();
-  if (name === "roles") loadRoles();
-  if (name === "events") loadEventsTable();
-  if (name === "classes") loadClassesAdmin();
-};
+/* ── NAVIGATION ── */
+document.querySelectorAll('.ni[data-pg]').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.pg').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pg-'+btn.dataset.pg).classList.add('active');
+  };
+});
 
-async function loadAllData() {
-  loadAnalytics();
-  loadSettingsPanel();
-  populateEventDropdowns();
-}
-
-// ANALYTICS
-async function loadAnalytics() {
-  const [regsSnap, eventsSnap] = await Promise.all([getDocs(collection(db,"registrations")), getDocs(collection(db,"events"))]);
-  allRegs = regsSnap.docs.map(d => ({id:d.id,...d.data()}));
-  let pending=0, selected=0, rejected=0;
-  allRegs.forEach(r => { if(r.status==="selected")selected++; else if(r.status==="rejected")rejected++; else pending++; });
-  document.getElementById("stats-row").innerHTML = `
-    <div class="stat-card"><div class="stat-num">${eventsSnap.size}</div><div class="stat-lbl">Events</div></div>
-    <div class="stat-card"><div class="stat-num">${allRegs.length}</div><div class="stat-lbl">Total Registrations</div></div>
-    <div class="stat-card"><div class="stat-num">${selected}</div><div class="stat-lbl">Selected</div><div class="stat-sub">${pending} pending, ${rejected} rejected</div></div>
-    <div class="stat-card"><div class="stat-num">${eventsSnap.size}</div><div class="stat-lbl">Events Running</div></div>`;
-
-  // Event breakdown
-  const breakdown = {};
-  allRegs.forEach(r => {
-    if (!breakdown[r.eventName]) breakdown[r.eventName] = {total:0,selected:0,rejected:0,pending:0};
-    breakdown[r.eventName].total++;
-    if(r.status==="selected") breakdown[r.eventName].selected++;
-    else if(r.status==="rejected") breakdown[r.eventName].rejected++;
-    else breakdown[r.eventName].pending++;
-  });
-  const evbd = document.getElementById("event-breakdown");
-  evbd.innerHTML = Object.entries(breakdown).map(([name,s]) => `<div class="ev-stat"><div class="ev-stat-name">${name}</div>
-    <div class="ev-stat-row"><span>Total</span><span>${s.total}</span></div>
-    <div class="ev-stat-row"><span>Selected</span><span>${s.selected}</span></div>
-    <div class="ev-stat-row"><span>Pending</span><span>${s.pending}</span></div>
-    <div class="ev-stat-row"><span>Rejected</span><span>${s.rejected}</span></div></div>`).join("") || "<div style='color:var(--text-muted)'>No data yet.</div>";
-
-  // Recent regs
-  const tbody = document.getElementById("recent-regs-body");
-  tbody.innerHTML = allRegs.slice(-10).reverse().map(r => `<tr>
-    <td>${r.name||''}</td><td>${r.class||''}</td><td>${r.eventName||''}</td>
-    <td><span class="badge badge-${r.status==='selected'?'selected':r.status==='rejected'?'rejected':'pending'}">${r.status||'pending'}</span></td>
-    <td>${r.createdAt?.toDate?.()?.toLocaleDateString?.("en-IN")||''}</td></tr>`).join("") || "<tr><td colspan='5' style='text-align:center;color:var(--text-muted)'>No registrations yet.</td></tr>";
-}
-
-// EVENTS
-async function populateEventDropdowns() {
-  const snap = await getDocs(collection(db,"events"));
-  const opts = `<option value=''>All Events</option>` + snap.docs.map(d => `<option value="${d.id}">${d.data().name}</option>`).join("");
-  const els = ["reg-filter-event","role-event","ct-class-ev","ev-event"];
-  document.getElementById("reg-filter-event").innerHTML = opts;
-  document.getElementById("role-event").innerHTML = `<option value=''>N/A</option>` + snap.docs.map(d => `<option value="${d.id}">${d.data().name}</option>`).join("");
-}
-
-async function loadEventsTable() {
-  const snap = await getDocs(collection(db,"events"));
-  const tbody = document.getElementById("events-table-body");
-  tbody.innerHTML = "";
-  for (const d of snap.docs) {
-    const ev = d.data();
-    const regQ = query(collection(db,"registrations"), where("eventId","==",d.id));
-    const regSnap = await getDocs(regQ);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td><strong>${ev.name||''}</strong></td><td>${ev.category||''}</td><td>${ev.slots||'—'}</td><td>${regSnap.size}</td>
-      <td><button class="btn-sm btn-danger" onclick="deleteEvent('${d.id}')">Delete</button></td>`;
-    tbody.appendChild(tr);
-  }
-}
-
-window.addEvent = async function() {
-  const name = document.getElementById("ev-name").value.trim();
-  if (!name) { showToast("Event name required."); return; }
-  const rules = document.getElementById("ev-rules").value.split("\n").filter(Boolean);
-  await addDoc(collection(db,"events"), {
-    name, category: document.getElementById("ev-cat").value.trim(),
-    logo: document.getElementById("ev-logo").value.trim(),
-    slots: document.getElementById("ev-slots").value,
-    description: document.getElementById("ev-desc").value.trim(),
-    venue: document.getElementById("ev-venue").value.trim(),
-    datetime: document.getElementById("ev-datetime").value,
-    rules, createdAt: serverTimestamp()
-  });
-  showToast("Event added!"); loadEventsTable(); loadAnalytics(); populateEventDropdowns();
-  ["ev-name","ev-cat","ev-logo","ev-slots","ev-desc","ev-venue","ev-rules"].forEach(id => document.getElementById(id).value = "");
-};
-window.deleteEvent = async function(id) {
-  if (!confirm("Delete this event?")) return;
-  await deleteDoc(doc(db,"events",id));
-  showToast("Event deleted."); loadEventsTable();
-};
-
-// REGISTRATIONS
-function renderRegs() {
-  const evFilter = document.getElementById("reg-filter-event").value;
-  const stFilter = document.getElementById("reg-filter-status").value;
-  let filtered = allRegs;
-  if (evFilter) filtered = filtered.filter(r => r.eventId === evFilter);
-  if (stFilter) filtered = filtered.filter(r => r.status === stFilter);
-  const tbody = document.getElementById("regs-table-body");
-  tbody.innerHTML = filtered.map(r => `<tr>
-    <td>${r.photoURL ? `<img src="${r.photoURL}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">` : '👤'}</td>
-    <td><strong>${r.name||''}</strong></td><td>${r.class||''}</td><td>${r.section||''}</td>
-    <td>${r.eventName||''}</td>
-    <td><span class="badge badge-${r.status==='selected'?'selected':r.status==='rejected'?'rejected':'pending'}">${r.status||'pending'}</span></td>
-    <td>${r.email||''}</td><td>${r.phone||''}</td>
-    <td style="display:flex;gap:4px;flex-wrap:wrap">
-      <button class="btn-sm btn-success" onclick="setStatus('${r.id}','selected','${r.name}','${r.email}')">Select</button>
-      <button class="btn-sm btn-danger" onclick="setStatus('${r.id}','rejected','${r.name}','${r.email}')">Reject</button>
-    </td></tr>`).join("") || `<tr><td colspan='9' style='text-align:center;color:var(--text-muted)'>No registrations found.</td></tr>`;
-}
-window.filterRegs = renderRegs;
-window.setStatus = async function(regId, status, name, email) {
-  await updateDoc(doc(db,"registrations",regId), {status});
-  if (status==="rejected") {
-    const msgDoc = await getDoc(doc(db,"settings","global"));
-    const rejectMsg = msgDoc.exists() ? msgDoc.data().rejectMessage : `Dear ${name}, we regret to inform you that you were not selected. Thank you for participating.`;
-    await addDoc(collection(db,"notifications"), {
-      to: email, type:"rejection", message: rejectMsg.replace("[Name]",name), createdAt: serverTimestamp()
+/* ── DASHBOARD ── */
+async function loadDashboard(){
+  try{
+    const snap=await getDocs(collection(db,'registrations'));
+    let total=0,sel=0,pend=0,rej=0,byEvent={};
+    snap.forEach(d=>{
+      const r=d.data();total++;
+      if(r.status==='Selected')sel++;
+      else if(r.status==='Audition Pending'||r.status==='Auditioning')pend++;
+      else if(r.status==='Rejected')rej++;
+      if(!byEvent[r.eventId])byEvent[r.eventId]={total:0,sel:0,pend:0,rej:0};
+      byEvent[r.eventId].total++;
+      if(r.status==='Selected')byEvent[r.eventId].sel++;
+      else if(r.status==='Rejected')byEvent[r.eventId].rej++;
+      else byEvent[r.eventId].pend++;
     });
-  }
-  showToast(`Status updated to ${status}.`);
-  await loadAnalytics(); renderRegs();
-};
-window.exportRegsCSV = function() { exportCSV(); };
-window.exportCSV = function() {
-  if (!allRegs.length) { showToast("No data to export."); return; }
-  const headers = ["Name","Email","Class","Section","Roll","Reg No","Event","Status","Phone","WhatsApp","Teacher"];
-  const rows = allRegs.map(r => [r.name,r.email,r.class,r.section,r.rollNumber,r.registrationNumber,r.eventName,r.status,r.phone,r.whatsapp,r.classteacher].map(v=>`"${v||''}"`).join(","));
-  const csv = [headers.join(","),...rows].join("\n");
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download = "cys_registrations.csv"; a.click();
-};
-
-// ROLES
-async function loadRoles() {
-  const snap = await getDocs(collection(db,"user_roles"));
-  const tbody = document.getElementById("roles-table-body");
-  const roleColors = {admin:"badge-gold",it_team:"badge-blue",core:"badge-purple",teacher:"badge-selected",event_head:"badge-gold",media:"badge-blue",security:"badge-pending"};
-  tbody.innerHTML = snap.docs.map(d => {
-    const data = d.data();
-    const roles = (data.roles||[]).map(r=>`<span class="badge ${roleColors[r]||'badge-gold'}">${r}</span>`).join(" ");
-    return `<tr><td>${data.name||''}</td><td style="font-size:12px">${data.email||''}</td><td>${roles}</td><td>${data.eventId||'—'}</td>
-      <td><button class="btn-sm btn-danger" onclick="removeRole('${d.id}')">Remove</button></td></tr>`;
-  }).join("") || `<tr><td colspan='5' style='text-align:center;color:var(--text-muted)'>No role assignments.</td></tr>`;
-  // Load whitelist
-  const wSnap = await getDocs(collection(db,"whitelisted_emails"));
-  const chips = document.getElementById("whitelist-chips");
-  chips.innerHTML = wSnap.docs.map(d => `<div class="chip">${d.id.replace(/_/g,'.')}<button class="chip-del" onclick="removeWhitelist('${d.id}')">×</button></div>`).join("");
-}
-window.assignRole = async function() {
-  const email = document.getElementById("role-email").value.trim();
-  const name = document.getElementById("role-dname").value.trim();
-  if (!email) { showToast("Email required."); return; }
-  const sel = document.getElementById("role-select");
-  const roles = Array.from(sel.selectedOptions).map(o => o.value);
-  const eventId = document.getElementById("role-event").value;
-  // Use email hash as doc id
-  const uid = email.replace(/[@.]/g,"_");
-  await setDoc(doc(db,"user_roles",uid), {email,name,roles,eventId,updatedAt:serverTimestamp()}, {merge:true});
-  showToast("Role saved!"); loadRoles();
-};
-window.removeRole = async (id) => { if(confirm("Remove role?")) { await deleteDoc(doc(db,"user_roles",id)); loadRoles(); } };
-window.addWhitelist = async function() {
-  const email = document.getElementById("whitelist-email").value.trim();
-  if (!email) return;
-  const key = email.replace(/\./g,"_");
-  await setDoc(doc(db,"whitelisted_emails",key), {email, addedAt:serverTimestamp()});
-  document.getElementById("whitelist-email").value = "";
-  showToast("Email whitelisted."); loadRoles();
-};
-window.removeWhitelist = async (key) => { await deleteDoc(doc(db,"whitelisted_emails",key)); loadRoles(); };
-
-// ANNOUNCEMENTS
-async function loadAnnouncements() {
-  const q = query(collection(db,"announcements"), orderBy("createdAt","desc"), limitQ(20));
-  const snap = await getDocs(q);
-  const list = document.getElementById("ann-list-admin");
-  list.innerHTML = snap.empty ? "<div style='color:var(--text-muted)'>No announcements yet.</div>"
-    : snap.docs.map(d => { const a = d.data(); return `<div class="ticket-card">
-      <div class="ticket-header"><span class="ticket-cat">${(a.targets||[]).join(", ")}</span><button class="btn-sm btn-danger" onclick="deleteAnn('${d.id}')">Delete</button></div>
-      <div class="ticket-desc">${a.text||''}</div>
-      <div class="ticket-meta">By ${a.author||''} • ${a.createdAt?.toDate?.()?.toLocaleDateString?.("en-IN")||''}</div></div>`; }).join("");
-}
-window.toggleTarget = (el) => el.classList.toggle("sel");
-window.postAnnouncement = async function() {
-  const text = document.getElementById("ann-text").value.trim();
-  if (!text) { showToast("Enter announcement text."); return; }
-  const targets = Array.from(document.querySelectorAll(".target-chip.sel")).map(el => el.dataset.t);
-  await addDoc(collection(db,"announcements"), {
-    text, targets, targetPublic: targets.includes("public"),
-    author: currentUser.displayName, authorEmail: currentUser.email, createdAt: serverTimestamp()
-  });
-  document.getElementById("ann-text").value = "";
-  document.querySelectorAll(".target-chip").forEach(c => c.classList.remove("sel"));
-  showToast("Announcement posted!"); loadAnnouncements();
-};
-window.deleteAnn = async (id) => { await deleteDoc(doc(db,"announcements",id)); loadAnnouncements(); };
-
-// TIMELINE
-async function loadTimeline() {
-  const q = query(collection(db,"timeline"), orderBy("order"));
-  const snap = await getDocs(q);
-  const list = document.getElementById("tl-list");
-  list.innerHTML = snap.empty ? "<div style='color:var(--text-muted)'>No timeline items.</div>"
-    : snap.docs.map(d => { const t = d.data(); return `<div class="ticket-card" style="display:flex;justify-content:space-between;align-items:center">
-      <div><strong>${t.date}</strong> — ${t.title}<div style="font-size:12px;color:var(--text-muted)">${t.description||''}</div></div>
-      <button class="btn-sm btn-danger" onclick="delTimeline('${d.id}')">×</button></div>`; }).join("");
-}
-window.addTimeline = async function() {
-  const date = document.getElementById("tl-date").value.trim();
-  const title = document.getElementById("tl-title").value.trim();
-  if (!date||!title) { showToast("Date and title required."); return; }
-  await addDoc(collection(db,"timeline"), {
-    date, title, description: document.getElementById("tl-desc").value.trim(),
-    order: parseInt(document.getElementById("tl-order").value)||99, createdAt: serverTimestamp()
-  });
-  ["tl-date","tl-title","tl-desc","tl-order"].forEach(id => document.getElementById(id).value="");
-  showToast("Timeline item added!"); loadTimeline();
-};
-window.delTimeline = async (id) => { await deleteDoc(doc(db,"timeline",id)); loadTimeline(); };
-
-// SETTINGS
-async function loadSettingsPanel() {
-  try {
-    const d = await getDoc(doc(db,"settings","global"));
-    if (d.exists()) {
-      document.getElementById("toggle-nondps").checked = d.data().showNonDPSAccounts ?? true;
-      document.getElementById("enrollment-status").value = d.data().enrollmentStatus || "open";
-      if (d.data().eventDate) document.getElementById("event-date-input").value = d.data().eventDate.split("T")[0];
-      document.getElementById("reject-msg").value = d.data().rejectMessage || "";
+    document.getElementById('s-total').textContent=total;
+    document.getElementById('s-sel').textContent=sel;
+    document.getElementById('s-pend').textContent=pend;
+    document.getElementById('s-rej').textContent=rej;
+    const breakdown=document.getElementById('eventBreakdown');
+    breakdown.innerHTML='';
+    for(const[evId,counts] of Object.entries(byEvent)){
+      const evName=allEventsData[evId]?.name||evId;
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px;';
+      row.innerHTML=`<strong>${evName}</strong><span style="display:flex;gap:16px;"><span style="color:#66BB6A;">✅ ${counts.sel}</span><span style="color:#FFA600;">⏳ ${counts.pend}</span><span style="color:#E05555;">❌ ${counts.rej}</span><span style="color:var(--tm);">Total: ${counts.total}</span></span>`;
+      breakdown.appendChild(row);
     }
-    const vd = await getDoc(doc(db,"settings","venue"));
-    if (vd.exists()) document.getElementById("venue-addr").value = vd.data().address || "";
-  } catch(e) {}
-}
-window.saveToggle = async function(key, val) {
-  await setDoc(doc(db,"settings","global"), {[key]:val}, {merge:true});
-  showToast("Setting saved.");
-};
-window.saveEnrollmentStatus = async function() {
-  const val = document.getElementById("enrollment-status").value;
-  await setDoc(doc(db,"settings","global"), {enrollmentStatus:val}, {merge:true});
-  showToast("Enrollment status updated.");
-};
-window.saveEventDate = async function() {
-  const val = document.getElementById("event-date-input").value;
-  await setDoc(doc(db,"settings","global"), {eventDate: val+"T09:00:00"}, {merge:true});
-  showToast("Event date saved.");
-};
-window.saveVenue = async function() {
-  const addr = document.getElementById("venue-addr").value.trim();
-  await setDoc(doc(db,"settings","venue"), {address:addr}, {merge:true});
-  showToast("Venue saved.");
-};
-window.saveRejectMsg = async function() {
-  const msg = document.getElementById("reject-msg").value.trim();
-  await setDoc(doc(db,"settings","global"), {rejectMessage:msg}, {merge:true});
-  showToast("Rejection message saved.");
-};
-
-// CLASSES
-async function loadClassesAdmin() {
-  const d = await getDoc(doc(db,"settings","classes"));
-  const classes = d.exists() ? d.data().list || [] : [];
-  const chips = document.getElementById("class-chips");
-  chips.innerHTML = classes.map(c => `<div class="chip">Class ${c}<button class="chip-del" onclick="removeClass('${c}')">×</button></div>`).join("");
-  // Populate dropdowns
-  const opts = `<option value=''>Select</option>` + classes.map(c=>`<option>${c}</option>`).join("");
-  document.getElementById("sec-class").innerHTML = opts;
-  document.getElementById("ct-class").innerHTML = opts;
-  loadTeacherMapping();
-}
-window.addClass = async function() {
-  const cls = document.getElementById("add-class").value.trim().toUpperCase();
-  if (!cls) return;
-  const d = await getDoc(doc(db,"settings","classes"));
-  const list = d.exists() ? d.data().list||[] : [];
-  if (!list.includes(cls)) { list.push(cls); await setDoc(doc(db,"settings","classes"),{list},{merge:true}); }
-  document.getElementById("add-class").value = ""; showToast("Class added."); loadClassesAdmin();
-};
-window.removeClass = async function(cls) {
-  const d = await getDoc(doc(db,"settings","classes"));
-  const list = (d.data()?.list||[]).filter(c=>c!==cls);
-  await setDoc(doc(db,"settings","classes"),{list},{merge:true});
-  showToast("Class removed."); loadClassesAdmin();
-};
-window.loadSecList = async function() {
-  const cls = document.getElementById("sec-class").value;
-  if (!cls) return;
-  const d = await getDoc(doc(db,"settings",`sections_${cls}`));
-  const list = d.exists() ? d.data().list||[] : [];
-  document.getElementById("sec-chips").innerHTML = list.map(s=>`<div class="chip">Sec ${s}<button class="chip-del" onclick="removeSection('${cls}','${s}')">×</button></div>`).join("");
-};
-window.addSection = async function() {
-  const cls = document.getElementById("sec-class").value;
-  const sec = document.getElementById("add-sec").value.trim().toUpperCase();
-  if (!cls||!sec) return;
-  const d = await getDoc(doc(db,"settings",`sections_${cls}`));
-  const list = d.exists() ? d.data().list||[] : [];
-  if (!list.includes(sec)) { list.push(sec); await setDoc(doc(db,"settings",`sections_${cls}`),{list},{merge:true}); }
-  document.getElementById("add-sec").value = ""; showToast("Section added."); window.loadSecList();
-};
-window.removeSection = async function(cls, sec) {
-  const d = await getDoc(doc(db,"settings",`sections_${cls}`));
-  const list = (d.data()?.list||[]).filter(s=>s!==sec);
-  await setDoc(doc(db,"settings",`sections_${cls}`),{list},{merge:true});
-  window.loadSecList();
-};
-window.saveTeacher = async function() {
-  const cls = document.getElementById("ct-class").value;
-  const sec = document.getElementById("ct-sec").value.trim().toUpperCase();
-  const name = document.getElementById("ct-name").value.trim();
-  if (!cls||!sec||!name) { showToast("All fields required."); return; }
-  await setDoc(doc(db,"class_teachers",`${cls}-${sec}`), {name, class:cls, section:sec}, {merge:true});
-  showToast("Teacher saved."); loadTeacherMapping();
-};
-async function loadTeacherMapping() {
-  const snap = await getDocs(collection(db,"class_teachers"));
-  const div = document.getElementById("teacher-mapping");
-  div.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Class</th><th>Section</th><th>Teacher</th><th></th></tr></thead><tbody>
-    ${snap.docs.map(d=>`<tr><td>${d.data().class}</td><td>${d.data().section}</td><td>${d.data().name}</td>
-    <td><button class="btn-sm btn-danger" onclick="delTeacher('${d.id}')">×</button></td></tr>`).join("")}
-  </tbody></table></div>`;
-}
-window.delTeacher = async (id) => { await deleteDoc(doc(db,"class_teachers",id)); loadTeacherMapping(); };
-
-// MESSAGING
-async function initMessaging() {
-  const threads = document.getElementById("msg-threads");
-  // Load all roles for admin to message
-  const rolesList = ["it_team","core","teacher","event_head","media","security","participant","broadcast_all"];
-  threads.innerHTML = `<div class="msg-thread" onclick="openBroadcast('all')"><div class="msg-thread-name">📣 Broadcast to All</div><div class="msg-thread-preview">Send to everyone</div></div>
-  <div class="msg-thread" onclick="openBroadcast('participant')"><div class="msg-thread-name">🎭 All Participants</div></div>
-  <div class="msg-thread" onclick="openBroadcast('event_head')"><div class="msg-thread-name">🎯 All Event Heads</div></div>
-  <div class="msg-thread" onclick="openBroadcast('core')"><div class="msg-thread-name">⚡ Core Team</div></div>
-  <div class="msg-thread" onclick="openBroadcast('it_team')"><div class="msg-thread-name">💻 IT Team</div></div>
-  <div class="msg-thread" onclick="openBroadcast('media')"><div class="msg-thread-name">📷 Media Team</div></div>
-  <div class="msg-thread" onclick="openBroadcast('teacher')"><div class="msg-thread-name">👩‍🏫 Teachers</div></div>`;
-  // Load DMs
-  const q = query(collection(db,"messages"), where("participants","array-contains",currentUser.uid));
-  const snap = await getDocs(q);
-  snap.forEach(d => {
-    const m = d.data();
-    const otherName = m.participantNames?.find(n=>n!==currentUser.displayName) || "DM";
-    const div = document.createElement("div");
-    div.className = "msg-thread"; div.onclick = () => openDM(d.id, otherName);
-    div.innerHTML = `<div class="msg-thread-name">💬 ${otherName}</div>`;
-    threads.appendChild(div);
-  });
+    if(!Object.keys(byEvent).length)breakdown.innerHTML='<p style="color:var(--tm);font-size:13px;">No registrations yet.</p>';
+  }catch(e){}
 }
 
-window.openBroadcast = async function(target) {
-  currentChatId = `broadcast_${target}`;
-  const chat = document.getElementById("msg-chat");
-  chat.innerHTML = `<div class="msg-chat-header"><div class="msg-chat-title">Broadcast to: ${target}</div></div>
-    <div class="msg-body" id="msg-body"></div>
-    <div class="msg-input-row"><input class="msg-input" id="msg-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="msg-send-btn" onclick="sendMsg()">➤</button></div>`;
-  loadMessages(`broadcast_${target}`);
-};
+document.getElementById('exportAllBtn').onclick=()=>exportCSV('all');
 
-async function loadMessages(chatId) {
-  const body = document.getElementById("msg-body");
-  if (!body) return;
-  const q = query(collection(db,"chats",chatId,"messages"), orderBy("createdAt","asc"));
-  onSnapshot(q, snap => {
-    body.innerHTML = "";
-    snap.forEach(d => {
-      const m = d.data();
-      const isMe = m.senderUid === currentUser.uid;
-      const div = document.createElement("div");
-      div.className = `msg-bubble ${isMe?"me":"them"}`;
-      div.innerHTML = `${!isMe?`<div class="msg-sender">${m.senderName}<span class="msg-role-tag"> • ${m.senderRole||''}</span></div>`:''}${m.text}<div class="msg-time">${m.createdAt?.toDate?.()?.toLocaleTimeString?.("en-IN",{hour:'2-digit',minute:'2-digit'})||''}</div>`;
-      body.appendChild(div);
+/* ── EVENTS ── */
+async function loadEvents(){
+  try{
+    const snap=await getDocs(query(collection(db,'events'),orderBy('order','asc')));
+    const list=document.getElementById('eventList');
+    const uEvSel=document.getElementById('uEvent');
+    const annEvSel=document.getElementById('annEvent');
+    const filterEv=document.getElementById('filterEvent');
+    list.innerHTML='';allEventsData={};
+    uEvSel.innerHTML='<option value="">None</option>';
+    annEvSel.innerHTML='<option value="*">All Events / Fest-wide</option>';
+    filterEv.innerHTML='<option value="">All Events</option>';
+    if(snap.empty){list.innerHTML='<p style="color:var(--tm);font-size:13px;">No events yet.</p>';return;}
+    snap.forEach(d=>{
+      const ev={id:d.id,...d.data()};allEventsData[d.id]=ev;
+      [uEvSel,annEvSel,filterEv].forEach(sel=>{const o=document.createElement('option');o.value=d.id;o.textContent=ev.name;sel.appendChild(o);});
+      const el=document.createElement('div');
+      el.className='event-card-mini';
+      el.innerHTML=`${ev.logoFile?`<img src="${ev.logoFile}" onerror="this.style.display='none'" alt="">`:'<div style="width:42px;height:42px;background:var(--ag4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">✦</div>'}
+        <div style="flex:1;"><div class="ecm-name">${ev.name}</div><div class="ecm-meta">${ev.category||''} ${ev.maxParticipants?'· Max '+ev.maxParticipants:''}</div></div>
+        <button class="btn-red" data-del-ev="${d.id}">🗑</button>`;
+      list.appendChild(el);
     });
-    body.scrollTop = body.scrollHeight;
+    list.querySelectorAll('[data-del-ev]').forEach(btn=>{
+      btn.onclick=async()=>{if(confirm('Delete this event?')){await deleteDoc(doc(db,'events',btn.dataset.delEv));loadEvents();toast('Event deleted.','ok');}};
+    });
+  }catch(e){document.getElementById('eventList').innerHTML='<p style="color:var(--tm);">Failed to load events.</p>';}
+}
+
+document.getElementById('addEventBtn').onclick=async()=>{
+  const name=document.getElementById('evName').value.trim();
+  if(!name){toast('Event name is required.','err');return;}
+  const logoFile=document.getElementById('evLogo').value.trim();
+  const h1Email=document.getElementById('evH1').value.trim();
+  const h2Email=document.getElementById('evH2').value.trim();
+  try{
+    const evRef=await addDoc(collection(db,'events'),{
+      name,category:document.getElementById('evCat').value.trim(),
+      description:document.getElementById('evDesc').value.trim(),
+      logoFile,maxParticipants:parseInt(document.getElementById('evMax').value)||0,
+      order:parseInt(document.getElementById('evOrder').value)||99,
+      createdAt:serverTimestamp()
+    });
+    // Assign event heads
+    if(h1Email){await assignEventHead(h1Email,evRef.id);}
+    if(h2Email){await assignEventHead(h2Email,evRef.id);}
+    toast(`Event "${name}" added!`,'ok');
+    ['evName','evCat','evDesc','evLogo','evMax','evOrder','evH1','evH2'].forEach(id=>document.getElementById(id).value='');
+    loadEvents();loadDashboard();
+  }catch(e){toast('Failed to add event.','err');}
+};
+
+async function assignEventHead(email,eventId){
+  const snap=await getDocs(query(collection(db,'users'),where('email','==',email)));
+  if(!snap.empty){
+    await updateDoc(doc(db,'users',snap.docs[0].id),{assignedEvent:eventId,role:'Event Head',roles:['Event Head']});
+  } else {
+    await addDoc(collection(db,'users'),{email,role:'Event Head',roles:['Event Head'],assignedEvent:eventId,name:'',profilePic:'',createdAt:serverTimestamp()});
+  }
+}
+
+/* ── USERS ── */
+let allUsers=[];
+async function loadUsers(){
+  try{
+    const snap=await getDocs(collection(db,'users'));
+    allUsers=[];
+    snap.forEach(d=>allUsers.push({id:d.id,...d.data()}));
+    renderUsers(allUsers);
+    loadPermissions();
+  }catch(e){}
+}
+
+function renderUsers(users){
+  const tbody=document.getElementById('usersBody');
+  tbody.innerHTML='';
+  if(!users.length){tbody.innerHTML='<tr><td colspan="5" style="color:var(--tm);">No users found.</td></tr>';return;}
+  users.forEach(u=>{
+    const roles=u.roles||[u.role||''];
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><div class="user-row"><img src="${u.profilePic||''}" onerror="this.style.display='none'" alt=""><span>${u.name||'—'}</span></div></td>
+      <td>${roles.map(r=>`<span class="role-chip">${r}</span>`).join(' ')}</td>
+      <td>${u.assignedEvent?allEventsData[u.assignedEvent]?.name||u.assignedEvent:'—'}</td>
+      <td style="font-size:12px;color:var(--tm);">${u.email||''}</td>
+      <td><button class="btn-red" data-del-user="${u.id}" style="font-size:11px;padding:5px 10px;">Remove</button></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('[data-del-user]').forEach(btn=>{
+    btn.onclick=async()=>{if(confirm('Remove this user?')){await deleteDoc(doc(db,'users',btn.dataset.delUser));loadUsers();toast('User removed.','ok');}};
   });
 }
 
-window.sendMsg = async function() {
-  const input = document.getElementById("msg-input");
-  const text = input?.value.trim();
-  if (!text || !currentChatId) return;
-  input.value = "";
-  await addDoc(collection(db,"chats",currentChatId,"messages"), {
-    text, senderUid: currentUser.uid, senderName: currentUser.displayName,
-    senderRole: "admin", createdAt: serverTimestamp(), read: false
+document.getElementById('userSearch').oninput=function(){
+  const q=this.value.toLowerCase();
+  renderUsers(allUsers.filter(u=>(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)));
+};
+
+document.getElementById('addUserBtn').onclick=async()=>{
+  const name=document.getElementById('uName').value.trim();
+  const email=document.getElementById('uEmail').value.trim();
+  const role=document.getElementById('uRole').value;
+  const role2=document.getElementById('uRole2').value;
+  const evId=document.getElementById('uEvent').value;
+  if(!email||!role){toast('Email and role required.','err');return;}
+  const roles=role2&&role2!==role?[role,role2]:[role];
+  try{
+    const snap=await getDocs(query(collection(db,'users'),where('email','==',email)));
+    const data={name,email,role,roles,assignedEvent:evId||'',profilePic:'',updatedAt:serverTimestamp()};
+    if(!snap.empty)await updateDoc(doc(db,'users',snap.docs[0].id),data);
+    else await addDoc(collection(db,'users'),{...data,createdAt:serverTimestamp()});
+    toast(`User ${name||email} added/updated!`,'ok');
+    ['uName','uEmail'].forEach(id=>document.getElementById(id).value='');
+    loadUsers();
+  }catch(e){toast('Failed to add user.','err');}
+};
+
+/* ── ROLE PERMISSIONS ── */
+const DEFAULT_PERMS={
+  'IT Team':{canPostAnnouncement:true,canManageEvents:true,canManageUsers:true,canViewAllChats:true,canExportData:true,canToggleSettings:true,canApproveAnnouncements:true},
+  'Core Team':{canPostAnnouncement:true,canManageEvents:true,canManageUsers:false,canViewAllChats:true,canExportData:true,canToggleSettings:true,canApproveAnnouncements:true},
+  'Teacher-in-Charge':{canPostAnnouncement:true,canManageEvents:false,canManageUsers:false,canViewAllChats:true,canExportData:true,canToggleSettings:false,canApproveAnnouncements:true},
+  'Event Head':{canPostAnnouncement:true,canManageEvents:false,canManageUsers:false,canViewAllChats:false,canExportData:false,canToggleSettings:false,canApproveAnnouncements:false},
+  'Media Team':{canPostAnnouncement:false,canManageEvents:false,canManageUsers:false,canViewAllChats:false,canExportData:false,canToggleSettings:false,canApproveAnnouncements:false},
+};
+const PERM_LABELS={canPostAnnouncement:'Post Announcements',canManageEvents:'Manage Events',canManageUsers:'Manage Users',canViewAllChats:'View All Chats',canExportData:'Export Data',canToggleSettings:'Toggle Settings',canApproveAnnouncements:'Approve Announcements'};
+
+async function loadPermissions(){
+  const panel=document.getElementById('permissionsPanel');
+  panel.innerHTML='';
+  let perms={};
+  try{const pd=await getDoc(doc(db,'rolePermissions','all'));if(pd.exists())perms=pd.data();}catch(e){}
+  for(const[role,defaults] of Object.entries(DEFAULT_PERMS)){
+    const rp={...defaults,...(perms[role]||{})};
+    const block=document.createElement('div');
+    block.style.cssText='margin-bottom:18px;';
+    block.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--ag);margin-bottom:10px;">${role}</div>`+
+      Object.entries(PERM_LABELS).map(([key,label])=>`
+        <div class="toggle-row">
+          <div><div class="toggle-label">${label}</div></div>
+          <label class="toggle"><input type="checkbox" data-role="${role}" data-perm="${key}" ${rp[key]?'checked':''}><span class="slider"></span></label>
+        </div>`).join('');
+    panel.appendChild(block);
+  }
+  panel.querySelectorAll('input[data-role]').forEach(cb=>{
+    cb.onchange=async()=>{
+      try{
+        const pd=await getDoc(doc(db,'rolePermissions','all'));
+        const existing=pd.exists()?pd.data():{};
+        if(!existing[cb.dataset.role])existing[cb.dataset.role]={};
+        existing[cb.dataset.role][cb.dataset.perm]=cb.checked;
+        await setDoc(doc(db,'rolePermissions','all'),existing);
+        toast('Permission updated.','ok');
+      }catch(e){toast('Failed to update permission.','err');}
+    };
   });
-  // Update chat meta
-  await setDoc(doc(db,"chats",currentChatId), {
-    lastMessage: text, lastAt: serverTimestamp(), target: currentChatId.replace("broadcast_","")
-  }, {merge:true});
-};
-
-window.openDM = async function(chatId, name) {
-  currentChatId = chatId;
-  const chat = document.getElementById("msg-chat");
-  chat.innerHTML = `<div class="msg-chat-header"><div class="msg-chat-title">💬 ${name}</div></div>
-    <div class="msg-body" id="msg-body"></div>
-    <div class="msg-input-row"><input class="msg-input" id="msg-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()"><button class="msg-send-btn" onclick="sendMsg()">➤</button></div>`;
-  loadMessages(chatId);
-};
-
-// TICKETS
-async function loadTickets() {
-  const q = query(collection(db,"tickets"), orderBy("createdAt","desc"));
-  const snap = await getDocs(q);
-  const list = document.getElementById("tickets-list");
-  list.innerHTML = snap.empty ? "<div style='color:var(--text-muted)'>No tickets.</div>"
-    : snap.docs.map(d => { const t = d.data(); return `<div class="ticket-card">
-      <div class="ticket-header">
-        <div><span class="ticket-cat">${t.category||''}</span> — <span style="font-size:12px">${t.userName||t.createdBy||''}</span></div>
-        <span class="badge ${t.status==='open'?'badge-pending':'badge-selected'}">${t.status||''}</span>
-      </div>
-      <div class="ticket-desc">${t.description||''}</div>
-      <div class="ticket-meta">${t.createdAt?.toDate?.()?.toLocaleDateString?.("en-IN")||''}</div>
-      <div class="ticket-actions">
-        <button class="btn-sm btn-success" onclick="resolveTicket('${d.id}')">Mark Resolved</button>
-        <button class="btn-sm btn-outline" onclick="escalateTicket('${d.id}')">Escalate to Teacher</button>
-      </div></div>`; }).join("");
 }
-window.resolveTicket = async (id) => { await updateDoc(doc(db,"tickets",id),{status:"resolved"}); loadTickets(); showToast("Ticket resolved."); };
-window.escalateTicket = async (id) => { await updateDoc(doc(db,"tickets",id),{escalated:true,status:"escalated"}); loadTickets(); showToast("Escalated to Teacher."); };
 
-// HELPERS
-function limitQ(n) { return { type: 'limit', _limit: n }; } // placeholder - use proper limit
-function showToast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),3500); }
+/* ── REGISTRATIONS ── */
+let allRegs=[];
+async function loadRegistrations(){
+  try{
+    const snap=await getDocs(query(collection(db,'registrations'),orderBy('createdAt','desc')));
+    allRegs=[];
+    snap.forEach(d=>allRegs.push({id:d.id,...d.data()}));
+    renderRegs(allRegs);
+  }catch(e){}
+}
+
+function renderRegs(regs){
+  const tbody=document.getElementById('regBody');tbody.innerHTML='';
+  if(!regs.length){tbody.innerHTML='<tr><td colspan="6" style="color:var(--tm);">No registrations.</td></tr>';return;}
+  regs.forEach(r=>{
+    const evName=allEventsData[r.eventId]?.name||r.eventId||'—';
+    const date=r.createdAt?.toDate?.().toLocaleDateString('en-IN')||'—';
+    const sc={'Audition Pending':'b-pend','Auditioning':'b-pend','Selected':'b-sel','Rejected':'b-rej'}[r.status]||'b-pend';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.name}</td><td>${r.class||''}-${r.section||''}</td><td>${evName}</td>
+      <td><span class="badge ${sc}">${r.status}</span></td><td>${date}</td>
+      <td><select style="background:var(--bg1);border:1px solid var(--bd);color:var(--tw);border-radius:5px;padding:4px 8px;font-size:12px;font-family:'Outfit',sans-serif;" data-reg-id="${r.id}">
+        <option ${r.status==='Audition Pending'?'selected':''}>Audition Pending</option>
+        <option ${r.status==='Auditioning'?'selected':''}>Auditioning</option>
+        <option ${r.status==='Selected'?'selected':''}>Selected</option>
+        <option ${r.status==='Rejected'?'selected':''}>Rejected</option>
+      </select></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('[data-reg-id]').forEach(sel=>{
+    sel.onchange=async()=>{
+      await updateDoc(doc(db,'registrations',sel.dataset.regId),{status:sel.value,updatedAt:serverTimestamp()});
+      toast('Status updated.','ok');loadDashboard();
+    };
+  });
+}
+
+document.getElementById('filterEvent').onchange=filterRegs;
+document.getElementById('filterStatus').onchange=filterRegs;
+function filterRegs(){
+  const ev=document.getElementById('filterEvent').value;
+  const st=document.getElementById('filterStatus').value;
+  renderRegs(allRegs.filter(r=>(!ev||r.eventId===ev)&&(!st||r.status===st)));
+}
+
+document.getElementById('exportRegBtn').onclick=()=>exportCSV('registrations');
+
+function exportCSV(type){
+  let rows,filename;
+  if(type==='registrations'||type==='all'){
+    rows=allRegs;filename='registrations.csv';
+    const headers=['Name','Email','Class','Section','Roll','ClassTeacher','CallNo','WhatsApp','Event','Status','Registered'];
+    const csv=[headers.join(','),...rows.map(r=>[r.name,r.email,r.class,r.section,r.roll,r.classTeacher,r.callNo,r.whatsappNo,allEventsData[r.eventId]?.name||r.eventId,r.status,r.createdAt?.toDate?.().toLocaleDateString('en-IN')||''].map(v=>`"${v||''}"`).join(','))].join('\n');
+    const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=filename;a.click();
+  }
+}
+
+/* ── ANNOUNCEMENTS ── */
+async function loadAnnouncements(){
+  const list=document.getElementById('annList');
+  try{
+    const snap=await getDocs(query(collection(db,'announcements'),orderBy('createdAt','desc')));
+    list.innerHTML='';
+    if(snap.empty){list.innerHTML='<p style="color:var(--tm);font-size:13px;">No announcements.</p>';return;}
+    snap.forEach(d=>{
+      const ann=d.data();
+      const el=document.createElement('div');
+      el.style.cssText='padding:13px;background:var(--bg3);border:1px solid var(--bd);border-left:3px solid var(--ag);border-radius:8px;margin-bottom:9px;display:flex;gap:14px;align-items:flex-start;';
+      const approved=ann.approved?'<span style="color:#66BB6A;font-size:11px;">✅ Live</span>':'<span style="color:#FFA600;font-size:11px;">⏳ Pending</span>';
+      el.innerHTML=`<div style="flex:1;"><strong style="font-size:13px;">${ann.title}</strong><p style="font-size:12px;color:var(--tm);margin-top:3px;">${ann.body}</p></div><div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">${approved}
+        ${!ann.approved?`<button class="btn-g" style="font-size:11px;padding:5px 10px;" data-approve="${d.id}">Approve</button>`:''}
+        <button class="btn-red" style="font-size:11px;padding:5px 10px;" data-del-ann="${d.id}">Delete</button></div>`;
+      list.appendChild(el);
+    });
+    list.querySelectorAll('[data-approve]').forEach(btn=>{btn.onclick=async()=>{await updateDoc(doc(db,'announcements',btn.dataset.approve),{approved:true});loadAnnouncements();toast('Announcement approved!','ok');};});
+    list.querySelectorAll('[data-del-ann]').forEach(btn=>{btn.onclick=async()=>{if(confirm('Delete?')){await deleteDoc(doc(db,'announcements',btn.dataset.delAnn));loadAnnouncements();toast('Deleted.','ok');}};});
+  }catch(e){list.innerHTML='<p style="color:var(--tm);">Failed to load.</p>';}
+}
+
+document.getElementById('postAnnBtn').onclick=async()=>{
+  const title=document.getElementById('annTitle').value.trim();
+  const body=document.getElementById('annBody').value.trim();
+  if(!title||!body){toast('Fill title and body.','err');return;}
+  await addDoc(collection(db,'announcements'),{title,body,targetEventId:document.getElementById('annEvent').value,targetRole:document.getElementById('annRole').value,targetPublic:document.getElementById('annPublic').checked,selectedOnly:document.getElementById('annSelOnly').checked,createdBy:CU.uid,senderName:CU.displayName||'',senderRole:'IT Team',approved:true,createdAt:serverTimestamp()});
+  toast('Announcement posted!','ok');document.getElementById('annTitle').value='';document.getElementById('annBody').value='';loadAnnouncements();
+};
+
+/* ── MESSAGES ── */
+document.querySelectorAll('.conv-item[data-chat]').forEach(item=>{
+  item.onclick=()=>openChat(item.dataset.chat,item.dataset.name,item.dataset.role,'');
+});
+async function loadDMList(){
+  const list=document.getElementById('dmList');list.innerHTML='';
+  try{
+    const snap=await getDocs(collection(db,'users'));
+    snap.forEach(d=>{
+      const u=d.data();if(!u.name&&!u.email)return;
+      const item=document.createElement('div');
+      item.className='conv-item';
+      item.innerHTML=`<img src="${u.profilePic||''}" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt=""><div><div class="conv-name">${u.name||u.email}</div><div class="conv-role">${u.role||''}</div></div>`;
+      item.onclick=()=>openChat(`dm_admin_${d.id}`,u.name||u.email,u.role||'User',u.profilePic||'');
+      list.appendChild(item);
+    });
+  }catch(e){}
+}
+
+function openChat(chatId,name,role,img){
+  activeChatId=chatId;
+  document.getElementById('activeChatName').textContent=name;
+  document.getElementById('activeChatRole').textContent=role;
+  document.getElementById('activeChatImg').src=img||'';
+  setDoc(doc(db,'chats',chatId),{type:'chat',participants:[CU.uid],updatedAt:serverTimestamp()},{merge:true});
+  if(activeChatUnsub)activeChatUnsub();
+  activeChatUnsub=onSnapshot(query(collection(db,'chats',chatId,'messages'),orderBy('sentAt','asc')),snap=>{
+    const c=document.getElementById('chatMsgs');c.innerHTML='';
+    if(snap.empty){c.innerHTML='<p style="color:var(--tm);font-size:13px;text-align:center;padding:30px;">No messages yet.</p>';return;}
+    snap.forEach(d=>{
+      const m=d.data();const own=m.senderId===CU.uid;
+      const bbl=document.createElement('div');bbl.className='bbl '+(own?'bbl-out':'bbl-in');
+      const t=m.sentAt?.toDate?.().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||'';
+      bbl.innerHTML=`${!own?`<div class="bbl-sender">${m.senderName}</div><div class="bbl-role">${m.senderRole||''}</div>`:''}<div>${m.text}</div><div class="bbl-time">${t}</div>`;
+      c.appendChild(bbl);
+    });
+    c.scrollTop=c.scrollHeight;
+  });
+}
+
+document.getElementById('chatSend').onclick=sendMsg;
+document.getElementById('chatIn').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey)sendMsg();};
+async function sendMsg(){
+  if(!activeChatId){toast('Select a conversation.','err');return;}
+  const inp=document.getElementById('chatIn');const text=inp.value.trim();if(!text)return;
+  inp.value='';
+  await addDoc(collection(db,'chats',activeChatId,'messages'),{senderId:CU.uid,senderName:CU.displayName||'',senderRole:'IT Team',text,sentAt:serverTimestamp(),delivered:false,seen:false});
+}
+
+/* ── TICKETS ── */
+async function loadTickets(){
+  const tbody=document.getElementById('ticketBody');
+  try{
+    const snap=await getDocs(query(collection(db,'tickets'),where('status','==',currentTicketFilter),orderBy('createdAt','desc')));
+    tbody.innerHTML='';
+    if(snap.empty){tbody.innerHTML=`<tr><td colspan="6" style="color:var(--tm);">No ${currentTicketFilter.toLowerCase()} tickets.</td></tr>`;return;}
+    snap.forEach(d=>{
+      const tk=d.data();
+      const date=tk.createdAt?.toDate?.().toLocaleDateString('en-IN')||'—';
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><strong>${tk.subject}</strong><p style="font-size:12px;color:var(--tm);margin-top:2px;">${tk.body?.slice(0,60)||''}…</p></td>
+        <td>${tk.userName||tk.userEmail||'—'}</td><td><span class="role-chip">${tk.userRole||''}</span></td>
+        <td><span class="badge b-pend">${tk.status}</span></td><td>${date}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${tk.status!=='Resolved'?`<button class="btn-g" style="font-size:11px;padding:5px 10px;" data-resolve="${d.id}">Resolve</button>`:''}
+          <button class="btn-o" style="font-size:11px;padding:5px 10px;" data-pass-teacher="${d.id}">Pass to Teacher</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-resolve]').forEach(btn=>{btn.onclick=async()=>{await updateDoc(doc(db,'tickets',btn.dataset.resolve),{status:'Resolved'});loadTickets();toast('Ticket resolved.','ok');};});
+    tbody.querySelectorAll('[data-pass-teacher]').forEach(btn=>{btn.onclick=async()=>{await updateDoc(doc(db,'tickets',btn.dataset.passTeacher),{passedToTeacher:true,status:'In Progress'});loadTickets();toast('Passed to Teacher.','ok');};});
+  }catch(e){tbody.innerHTML='<tr><td colspan="6" style="color:var(--tm);">Failed to load tickets.</td></tr>';}
+}
+
+document.querySelectorAll('.tb[data-tf]').forEach(btn=>{
+  btn.onclick=()=>{document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentTicketFilter=btn.dataset.tf;loadTickets();};
+});
+
+/* ── SETTINGS ── */
+async function loadSettings(){
+  try{
+    const sd=await getDoc(doc(db,'settings','global'));
+    if(!sd.exists())return;
+    const s=sd.data();settingsData=s;
+    if(s.unofficialBannerVisible)document.getElementById('tBanner').checked=true;
+    if(s.unofficialBannerText)document.getElementById('bannerText').value=s.unofficialBannerText;
+    if(s.enrollmentStatus)document.getElementById('enrollStatus').value=s.enrollmentStatus;
+    if(s.festSubtitle)document.getElementById('festSubtitle').value=s.festSubtitle;
+    if(s.venueName)document.getElementById('venueName').value=s.venueName;
+    if(s.venueAddress)document.getElementById('venueAddr').value=s.venueAddress;
+    if(s.venueDate)document.getElementById('venueDateDisp').value=s.venueDate;
+    if(s.venueTime)document.getElementById('venueTime').value=s.venueTime;
+    if(s.eventDate){const d=s.eventDate.toDate?s.eventDate.toDate():new Date(s.eventDate);document.getElementById('festDate').value=d.toISOString().slice(0,16);}
+    overlayImages=s.overlayImages||[];renderOverlayImages();
+    loadTimeline();loadRulesEdit();loadClassList();
+  }catch(e){}
+}
+
+document.getElementById('saveSettingsBtn').onclick=async()=>{
+  const dateVal=document.getElementById('festDate').value;
+  await setDoc(doc(db,'settings','global'),{
+    unofficialBannerVisible:document.getElementById('tBanner').checked,
+    unofficialBannerText:document.getElementById('bannerText').value,
+    enrollmentStatus:document.getElementById('enrollStatus').value,
+    festSubtitle:document.getElementById('festSubtitle').value,
+    venueName:document.getElementById('venueName').value,
+    venueAddress:document.getElementById('venueAddr').value,
+    venueDate:document.getElementById('venueDateDisp').value,
+    venueTime:document.getElementById('venueTime').value,
+    eventDate:dateVal?new Date(dateVal):null,
+    overlayImages,
+    updatedAt:serverTimestamp()
+  },{merge:true});
+  toast('Settings saved!','ok');
+};
+
+/* ── OVERLAY IMAGES ── */
+function renderOverlayImages(){
+  const container=document.getElementById('overlayImgList');
+  container.innerHTML='';
+  overlayImages.forEach((img,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;';
+    row.innerHTML=`<span style="font-size:13px;flex:1;">📷 ${img}</span><button class="btn-red" style="font-size:11px;padding:4px 10px;" data-rm-img="${i}">Remove</button>`;
+    container.appendChild(row);
+  });
+  container.querySelectorAll('[data-rm-img]').forEach(btn=>{
+    btn.onclick=()=>{overlayImages.splice(parseInt(btn.dataset.rmImg),1);renderOverlayImages();};
+  });
+}
+
+document.getElementById('addOverlayImgBtn').onclick=()=>{
+  const val=document.getElementById('newOverlayImg').value.trim();
+  if(!val){toast('Enter a filename.','err');return;}
+  overlayImages.push(val);document.getElementById('newOverlayImg').value='';renderOverlayImages();
+  toast('Image added (save settings to apply).','ok');
+};
+
+/* ── TIMELINE ── */
+async function loadTimeline(){
+  const edit=document.getElementById('timelineEdit');edit.innerHTML='';
+  try{
+    const snap=await getDocs(query(collection(db,'settings','global','timeline'),orderBy('order','asc')));
+    snap.forEach(d=>{
+      const item=d.data();
+      const row=document.createElement('div');row.className='timeline-item-edit';
+      row.innerHTML=`<span style="font-size:12px;color:var(--ag);min-width:110px;">${item.date}</span><span style="font-size:13px;flex:1;">${item.title}</span><button class="btn-red" style="font-size:11px;padding:4px 9px;" data-del-tl="${d.id}">✕</button>`;
+      edit.appendChild(row);
+    });
+    edit.querySelectorAll('[data-del-tl]').forEach(btn=>{btn.onclick=async()=>{await deleteDoc(doc(db,'settings','global','timeline',btn.dataset.delTl));loadTimeline();toast('Removed.','ok');};});
+  }catch(e){}
+}
+
+document.getElementById('addTlBtn').onclick=async()=>{
+  const date=document.getElementById('tlDate').value.trim();
+  const title=document.getElementById('tlTitle').value.trim();
+  if(!title){toast('Title required.','err');return;}
+  const snap=await getDocs(collection(db,'settings','global','timeline'));
+  await addDoc(collection(db,'settings','global','timeline'),{date,title,order:snap.size+1});
+  document.getElementById('tlDate').value='';document.getElementById('tlTitle').value='';
+  loadTimeline();toast('Timeline item added!','ok');
+};
+
+/* ── RULES ── */
+let currentRuleItems=[];
+async function loadRulesEdit(){
+  const edit=document.getElementById('rulesEdit');edit.innerHTML='';
+  try{
+    const snap=await getDocs(collection(db,'settings','global','rules'));
+    snap.forEach(d=>{
+      const b=d.data();
+      const el=document.createElement('div');
+      el.style.cssText='padding:10px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;';
+      el.innerHTML=`<div><strong style="font-size:13px;color:var(--ag);">${b.title}</strong><p style="font-size:12px;color:var(--tm);margin-top:3px;">${(b.items||[]).length} rules</p></div><button class="btn-red" style="font-size:11px;padding:4px 9px;" data-del-rule="${d.id}">✕</button>`;
+      edit.appendChild(el);
+    });
+    edit.querySelectorAll('[data-del-rule]').forEach(btn=>{btn.onclick=async()=>{await deleteDoc(doc(db,'settings','global','rules',btn.dataset.delRule));loadRulesEdit();toast('Removed.','ok');};});
+  }catch(e){}
+}
+
+document.getElementById('addRuleBtn').onclick=()=>{
+  const item=document.getElementById('ruleItem').value.trim();
+  if(!item){toast('Enter a rule item.','err');return;}
+  currentRuleItems.push(item);document.getElementById('ruleItem').value='';
+  toast(`Rule item added (${currentRuleItems.length} so far). Click Save Rule Block when done.`,'ok');
+};
+
+document.getElementById('saveRuleBlockBtn').onclick=async()=>{
+  const title=document.getElementById('ruleBlockTitle').value.trim();
+  if(!title||!currentRuleItems.length){toast('Title and at least one rule item required.','err');return;}
+  await addDoc(collection(db,'settings','global','rules'),{title,items:currentRuleItems});
+  document.getElementById('ruleBlockTitle').value='';currentRuleItems=[];
+  loadRulesEdit();toast('Rule block saved!','ok');
+};
+
+/* ── CLASSES ── */
+async function loadClassList(){
+  const list=document.getElementById('classList');list.innerHTML='';
+  try{
+    const snap=await getDocs(collection(db,'classes'));
+    snap.forEach(d=>{
+      const cls=d.data();
+      const el=document.createElement('div');
+      el.style.cssText='padding:9px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;';
+      const sections=(cls.sections||[]).map(s=>`${s.name} (${s.teacher})`).join(', ');
+      el.innerHTML=`<div><strong style="font-size:13px;">Class ${d.id}</strong><p style="font-size:12px;color:var(--tm);margin-top:2px;">${sections}</p></div>`;
+      list.appendChild(el);
+    });
+  }catch(e){}
+}
+
+document.getElementById('addClassBtn').onclick=async()=>{
+  const cls=document.getElementById('newClass').value.trim().toUpperCase();
+  const sec=document.getElementById('newSection').value.trim().toUpperCase();
+  const teacher=document.getElementById('newTeacher').value.trim();
+  if(!cls||!sec||!teacher){toast('All fields required.','err');return;}
+  try{
+    const existing=await getDoc(doc(db,'classes',cls));
+    const sections=existing.exists()?(existing.data().sections||[]):[];
+    if(!sections.find(s=>s.name===sec)){sections.push({name:sec,teacher});}
+    await setDoc(doc(db,'classes',cls),{sections});
+    document.getElementById('newSection').value='';document.getElementById('newTeacher').value='';
+    loadClassList();toast(`Section ${cls}-${sec} added!`,'ok');
+  }catch(e){toast('Failed.','err');}
+};
+
+/* ── ATTENDANCE ── */
+async function loadAttendance(){
+  const tbody=document.getElementById('attendanceBody');
+  try{
+    const snap=await getDocs(query(collection(db,'attendance'),orderBy('scannedAt','desc'),limit(50)));
+    tbody.innerHTML='';
+    if(snap.empty){tbody.innerHTML='<tr><td colspan="5" style="color:var(--tm);">No attendance records yet.</td></tr>';return;}
+    snap.forEach(d=>{
+      const a=d.data();const time=a.scannedAt?.toDate?.().toLocaleString('en-IN')||'—';
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${a.userName||'—'}</td><td><span class="role-chip">${a.userRole||''}</span></td><td>${allEventsData[a.eventId]?.name||a.eventId||'—'}</td><td>${time}</td><td>${a.scannedBy||'—'}</td>`;
+      tbody.appendChild(tr);
+    });
+  }catch(e){tbody.innerHTML='<tr><td colspan="5" style="color:var(--tm);">Failed to load.</td></tr>';}
+}
+
+document.getElementById('logoutBtn').onclick=async()=>{await signOut(auth);sessionStorage.clear();window.location.href='portal-login.html';};
 </script>
 </body>
 </html>
